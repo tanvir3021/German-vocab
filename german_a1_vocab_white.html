@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>German A1 Vocabulary</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --card: #f7f7f7;
+    --card2: #efefef;
+    --border: #cccccc;
+    --text: #111111;
+    --muted: #555555;
+    --accent: #000000;
+    --learned: #999999;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
+
+  header { background: #fff; padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--accent); }
+  header h1 { font-size: 1.25rem; font-weight: 700; color: #000; letter-spacing: 0.5px; }
+  header span { background: var(--card2); color: #000; font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); }
+
+  .stats { display: flex; gap: 10px; padding: 12px 16px; background: #f0f0f0; flex-wrap: wrap; border-bottom: 1px solid var(--border); }
+  .stat-item { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; font-size: 0.78rem; color: var(--muted); }
+  .stat-item b { color: #000; font-size: 1rem; display: block; }
+
+  .controls { padding: 14px 16px; display: flex; gap: 10px; flex-wrap: wrap; background: var(--bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
+  .search-box { flex: 1; min-width: 200px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 9px 14px; color: var(--text); font-size: 0.9rem; outline: none; }
+  .search-box:focus { border-color: #000; }
+  .filter-btn { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; color: var(--muted); font-size: 0.8rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .filter-btn.active { background: #000; border-color: #000; color: #fff; font-weight: 600; }
+
+  .select-row { display: flex; gap: 10px; padding: 10px 16px; background: var(--bg); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .dropdown { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; color: var(--text); font-size: 0.82rem; cursor: pointer; outline: none; flex: 1; min-width: 160px; }
+  .dropdown:focus { border-color: #000; }
+
+  .content { padding: 16px; }
+  .category-block { margin-bottom: 22px; }
+  .category-title { font-size: 0.78rem; font-weight: 700; color: #000; text-transform: uppercase; letter-spacing: 1.5px; padding: 6px 0; margin-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .category-count { background: var(--card2); color: var(--muted); font-size: 0.68rem; padding: 2px 8px; border-radius: 10px; letter-spacing: 0; text-transform: none; font-weight: 500; border: 1px solid var(--border); }
+
+  .word-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+  .word-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; transition: all 0.2s; position: relative; }
+  .word-card:hover { border-color: #000; }
+  .word-card.learned { border-color: var(--learned); background: #ececec; opacity: 0.8; }
+  .word-card.learned .badge { display: flex; }
+
+  .badge { display: none; position: absolute; top: 8px; right: 8px; background: #000; color: #fff; font-size: 0.62rem; padding: 2px 7px; border-radius: 10px; align-items: center; gap: 3px; font-weight: 700; }
+
+  .german-word { font-size: 1rem; font-weight: 600; color: #000; margin-bottom: 4px; }
+  .article-badge { font-size: 0.7rem; padding: 1px 7px; border-radius: 8px; margin-right: 5px; font-weight: 700; border: 1px solid var(--border); color: var(--muted); }
+
+  .bangla-row { margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--border); }
+  .bangla-meaning { font-size: 0.85rem; color: #000fff; font-weight: 500; display: block; }
+  .bangla-pronun { font-size: 0.78rem; color: var(--muted); font-style: italic; display: block; margin-top: 2px; }
+
+  .card-actions { display: flex; gap: 6px; margin-top: 10px; align-items: center; }
+  .btn-audio { background: var(--card2); border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; color: var(--text); cursor: pointer; font-size: 0.78rem; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
+  .btn-audio:hover { background: #000; color: #fff; }
+  .btn-learned { margin-left: auto; background: transparent; border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; color: var(--muted); cursor: pointer; font-size: 0.74rem; transition: all 0.2s; }
+  .btn-learned:hover { border-color: #000; color: #000; }
+  .word-card.learned .btn-learned { background: #000; border-color: #000; color: #fff; }
+
+  .quiz-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 100; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+  .quiz-overlay.open { display: flex; }
+  .quiz-box { background: var(--card); border: 2px solid #000; border-radius: 16px; padding: 28px; width: 100%; max-width: 480px; text-align: center; }
+  .quiz-progress { font-size: 0.78rem; color: var(--muted); margin-bottom: 16px; }
+  .quiz-question { font-size: 1.4rem; font-weight: 700; color: #000; margin-bottom: 8px; }
+  .quiz-hint { font-size: 0.8rem; color: var(--muted); margin-bottom: 20px; }
+  .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .quiz-opt { background: var(--card2); border: 2px solid var(--border); border-radius: 10px; padding: 12px; cursor: pointer; font-size: 0.88rem; color: var(--text); transition: all 0.2s; }
+  .quiz-opt:hover { border-color: #000; }
+  .quiz-opt.correct { background: #000; border-color: #000; color: #fff; font-weight: 700; }
+  .quiz-opt.wrong { background: #ffe5e5; border-color: #cc0000; color: #cc0000; }
+  .quiz-feedback { font-size: 0.9rem; min-height: 30px; margin-bottom: 12px; }
+  .quiz-next { background: #000; border: none; border-radius: 8px; padding: 10px 28px; color: #fff; cursor: pointer; font-size: 0.9rem; font-weight: 700; }
+  .quiz-close { background: transparent; border: 1px solid var(--border); border-radius: 8px; padding: 8px 20px; color: var(--muted); cursor: pointer; font-size: 0.85rem; margin-top: 8px; }
+
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid var(--border); display: flex; z-index: 40; }
+  .nav-btn { flex: 1; padding: 12px 0; background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; gap: 3px; transition: color 0.2s; }
+  .nav-btn:hover, .nav-btn.active { color: #000; }
+  .nav-icon { font-size: 1.2rem; }
+  .pb { padding-bottom: 70px; }
+
+  .empty { text-align: center; padding: 50px 20px; color: var(--muted); font-size: 0.9rem; }
+
+  @media(max-width:500px) {
+    .word-grid { grid-template-columns: 1fr; }
+    .quiz-options { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>German A1 Vocabulary</h1>
+  <span id="totalCount">935 শব্দ</span>
+</header>
+
+<div class="stats">
+  <div class="stat-item"><b id="sLearned">0</b>শেখা হয়েছে</div>
+  <div class="stat-item"><b id="sRemain">935</b>বাকি আছে</div>
+  <div class="stat-item"><b id="sKapitel">9</b>অধ্যায়</div>
+  <div class="stat-item"><b id="sPct">0%</b>সম্পন্ন</div>
+</div>
+
+<div class="controls">
+  <input class="search-box" type="text" id="searchInput" placeholder="শব্দ খুঁজুন... (German বা Bangla)"/>
+  <button class="filter-btn active" id="btnAll" onclick="setFilter('all')">সব</button>
+  <button class="filter-btn" id="btnUnlearned" onclick="setFilter('unlearned')">বাকি</button>
+  <button class="filter-btn" id="btnLearned" onclick="setFilter('learned')">শেখা</button>
+  <button class="filter-btn" style="background:#000;color:#fff;font-weight:700;" onclick="startQuiz()">Quiz</button>
+</div>
+
+<div class="select-row">
+  <select class="dropdown" id="chapterSelect" onchange="onChapterChange()">
+    <option value="all">সব অধ্যায় (Kapitel 1-9)</option>
+  </select>
+  <select class="dropdown" id="categorySelect" onchange="onCategoryChange()">
+    <option value="all">All categories</option>
+  </select>
+</div>
+
+<div class="content pb" id="mainContent"></div>
+
+<div class="quiz-overlay" id="quizOverlay">
+  <div class="quiz-box">
+    <div class="quiz-progress" id="qProgress">প্রশ্ন ১/১০</div>
+    <div class="quiz-question" id="qQuestion"></div>
+    <div class="quiz-hint" id="qHint"></div>
+    <div class="quiz-options" id="qOptions"></div>
+    <div class="quiz-feedback" id="qFeedback"></div>
+    <button class="quiz-next" id="qNext" onclick="nextQuiz()" style="display:none">পরের প্রশ্ন →</button>
+    <br/>
+    <button class="quiz-close" onclick="closeQuiz()">✕ বন্ধ করো</button>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <button class="nav-btn active" onclick="scrollToTop()"><span class="nav-icon">📚</span>শব্দ</button>
+  <button class="nav-btn" onclick="startQuiz()"><span class="nav-icon">🎯</span>Quiz</button>
+  <button class="nav-btn" onclick="speakRandom()"><span class="nav-icon">🔊</span>শুনো</button>
+  <button class="nav-btn" onclick="resetAll()"><span class="nav-icon">🔄</span>রিসেট</button>
+</div>
+
+<script>
+const VOCAB = {"Kapitel 1": {"sich vorstellen": ["der Name", "mein (Mein Name ist ...)", "dein (Wie ist dein Name?)", "Ihr (Wie ist Ihr Name?)", "der Vorname", "der Nachname", "buchstabieren", "heißen", "sein, er ist", "wohnen", "in (Ich wohne in ...)", "die Stadt", "wie (Wie heißt du?)", "wer (Wer bist du?)", "wo (Wo wohnst du?)", "woher (Woher kommst du?)", "Das ist Herr/Frau ...", "die E-Mail-Adresse", "die Handynummer", "die Telefonnummer"], "grüßen und verabschieden": ["Hallo!", "Guten Morgen.", "Guten Tag.", "Guten Abend.", "Gute Nacht.", "Tschüs.", "Ciao.", "Bis bald!", "Auf Wiedersehen."], "Länder und Sprachen": ["Deutschland", "Österreich", "die Schweiz", "das Land", "kommen", "aus (Er kommt aus Spanien.)", "die Sprache", "lernen", "sprechen, er spricht", "Welche Sprachen sprechen Sie?", "Deutsch"], "nach dem Befinden fragen": ["Wie geht's?", "Sehr gut.", "Danke, gut.", "Ganz gut."], "Zahlen": ["die Zahl", "null", "eins", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn", "elf", "zwölf", "dreizehn", "vierzehn", "fünfzehn", "sechzehn", "siebzehn", "achtzehn", "neunzehn", "zwanzig"], "im Kurs": ["fragen", "die Antwort", "hören", "lesen, er liest", "machen", "notieren", "raten, er rät", "sagen", "sammeln", "schreiben", "spielen", "zu|ordnen", "der Partner", "die Partnerin"], "andere wichtige Wörter": ["die Person", "der Text", "das Wort", "die Autobahn", "die Flasche", "der Kindergarten", "der Koffer", "Entschuldigung, noch einmal, bitte.", "Wie bitte?", "Das verstehe ich nicht.", "Bitte ein bisschen langsamer."]}, "Kapitel 2": {"in der Freizeit": ["das Hobby", "das Buch", "das Café", "der Computer", "die Verabredung", "wann (Wann gehen wir ins Café?)", "der Freund", "die Freundin", "die Leute (Pl.)", "der Fußball (Sg.)", "Tennis spielen", "joggen", "das Kino", "das Theater", "das Museum, Museen", "die Musik (Sg.)", "das Schwimmbad", "schwimmen", "fotografieren", "das Foto", "kochen", "reisen", "singen", "tanzen", "frei|haben, er hat frei"], "Berufe und Arbeit": ["arbeiten", "bei (Ich arbeite bei ...)", "der Beruf", "von", "Was sind Sie von Beruf?", "der Arzt", "die Ärztin", "das Krankenhaus", "der Friseur", "die Friseurin", "die Handwerkerin", "der Journalist", "die Kellnerin", "der Koch", "die Köchin", "der Krankenpfleger", "das Restaurant", "der Kollege", "die Kollegin", "die Firma, Firmen", "der Lehrer", "die Schule", "der Kurs", "die Mechanikerin", "der Polizist", "die Studentin", "studieren", "die Universität", "das Seminar", "der Taxifahrer", "das Taxi", "das Auto", "fahren, er fährt", "die Verkäuferin"], "Zeit": ["der Abend", "der Nachmittag", "der Moment", "im Moment", "die Stunde", "der Tag", "die Woche", "pro Woche", "das Wochenende", "der Wochentag", "das Jahr", "alt", "Ich bin ... Jahre alt."], "Wochentage": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"], "Termine": ["der Termin", "morgen", "nachts", "meistens", "noch"], "Informationen zur Person": ["die Information", "der Familienname", "die Adresse", "die Straße", "die Hausnummer", "die Postleitzahl", "der Wohnort", "das Geburtsdatum", "der Geburtsort", "männlich", "weiblich", "das Formular"], "andere wichtige Wörter": ["ja", "nein", "die Notiz (Machen Sie Notizen.)", "das Beispiel", "der Schlüssel", "das Wörterbuch", "das Zimmer", "haben, er hat (Ich habe vier Seminare pro Woche.)", "passen", "suchen", "warten", "alle", "hier", "gern", "Ich schwimme gern.", "gehen", "Es geht so.", "leider", "Das geht leider nicht.", "groß", "lustig", "neu", "super", "toll", "viel", "wirklich"]}, "Kapitel 3": {"eine Stadttour": ["der Mensch", "das Haus", "das Rathaus", "das Konzerthaus", "die Kirche", "der Turm", "das Hotel", "die Brücke", "der Park", "der Markt", "der Bahnhof", "der Hafen", "der See", "der Fluss", "das Meer", "sehen, er sieht (Da sieht man den Hafen.)", "da (Da ist das Hotel.)", "Das ist ...", "interessant", "schön", "die Station", "der Ort"], "Maße angeben": ["der Meter", "der Kilometer", "lang (Die Brücke ist 12 Kilometer lang.)", "breit (Das Rathaus ist 111 Meter breit.)", "hoch (Der Turm ist 132 Meter hoch.)", "über (Das Haus ist über 100 Jahre alt.)", "die Kosten (Pl.)", "der Euro"], "Verkehrsmittel": ["zu Fuß gehen", "das Fahrrad", "der Bus", "die Straßenbahn", "der Zug", "die U-Bahn", "die S-Bahn", "das Schiff", "das Flugzeug", "die Fahrkarte", "schnell", "nach (Der Zug fährt nach Berlin.)"], "einen Weg beschreiben": ["der Weg", "Wo ist bitte ...?", "Das ist ganz einfach.", "rechts", "links", "geradeaus", "Gehen Sie zuerst rechts und dann geradeaus.", "richtig (Ist das richtig?)", "genau (Ja, genau!)", "die Mitte (Sg.)", "Wo ist das? – Genau in der Mitte.", "also (Also, zuerst links und ...)", "zeigen", "der Plan", "zeichnen", "der Start (Sg.)", "das Ziel", "schon (Da ist schon das Hotel.)"], "Events": ["das Event", "das Festival", "das Ticket"], "Veranstaltungen": ["das Publikum (Sg.)", "der Besucher", "die Besucherin", "der Gast", "das Konzert", "das Orchester", "der Chor", "die Konzertkarte", "der Film", "der Schauspieler", "die Schauspielerin", "der Star", "der Regisseur", "die Regisseurin", "die Ausstellung", "finden", "Findest du das Konzert gut?"], "Jahreszeiten": ["die Jahreszeit", "der Frühling", "der Sommer", "der Herbst", "der Winter"], "Monate": ["der Monat", "der Januar", "der Februar", "der März", "der April", "der Mai", "der Juni", "der Juli", "der August", "der September", "der Oktober", "der November", "der Dezember"], "andere wichtige Wörter": ["die Gruppe", "das Bild", "das Plakat", "das Glück (Sg.)", "so (So ein Glück!)", "der Test", "heute (Heute ist kein Test!)", "jetzt (Jetzt aber schnell!)", "okay", "die Welt", "die Lösung", "ein Mal, zwei Mal, ...", "das erste/zweite/... Mal", "Vielen Dank!"]}, "Kapitel 4": {"Obst": ["das Obst (Sg.)", "der Apfel", "die Banane", "die Birne"], "Gemüse": ["das Gemüse (Sg.)", "die Gurke", "die Kartoffel", "der Salat", "die Tomate", "die Olive", "die Zwiebel"], "Backwaren": ["das Brot", "das Brötchen", "der Keks", "der Kuchen"], "Fleischprodukte": ["das Fleisch (Sg.)", "das Hähnchen", "der Schinken", "die Wurst", "das Würstchen"], "Milchprodukte": ["die Butter (Sg.)", "der/das Joghurt", "der Käse (Sg.)", "die Milch (Sg.)", "die Sahne (Sg.)"], "andere Lebensmittel": ["der Pfeffer (Sg.)", "das Salz", "der Zucker (Sg.)", "der Essig", "das Öl", "die Nudel", "der Reis (Sg.)", "das Ei", "der Fisch", "die Schokolade", "die Marmelade", "das Müsli"], "Getränke": ["das Getränk", "das Wasser", "der Saft", "die Limonade", "die Cola", "der Kaffee", "der Tee"], "Geschäfte": ["die Bäckerei", "der Markt", "die Metzgerei", "der Supermarkt"], "Packungen und Maße": ["die Packung", "der Becher", "die Dose", "das Stück", "die Tüte", "das Gramm (g)", "das Kilo(gramm) (kg)", "der Liter (l)"], "beim Einkaufen": ["kaufen", "ein|kaufen", "der Einkaufswagen", "brauchen", "möchten, er möchte", "finden", "Entschuldigung, wo finde ich ...?", "Wo gibt es ...?", "kosten", "der Preis", "Das macht ... Euro, bitte.", "der Kassenzettel", "teuer", "wechseln", "Können Sie wechseln, bitte?"], "beim Essen": ["Guten Appetit!", "Danke, gleichfalls.", "das Essen", "essen, er isst", "trinken", "fertig (Das Essen ist gleich fertig.)", "mögen, er mag", "nehmen, er nimmt", "schmecken (Schmeckt's?)", "lecker", "süß", "frisch"], "Mahlzeiten": ["das Frühstück", "frühstücken", "das Mittagessen", "das Abendessen"], "Gerichte": ["das Gericht", "die Suppe", "die Pizza, -s/Pizzen", "die Pommes frites (Pl.)"], "Tageszeiten": ["der Morgen", "morgens", "der Mittag", "mittags", "der Nachmittag", "nachmittags", "der Abend", "abends", "die Nacht", "nachts"], "andere wichtige Wörter": ["die Einladung", "nett", "gesund", "waschen, er wäscht", "schneiden", "grillen", "probieren", "die Kantine", "wenig", "vielleicht", "wichtig"]}, "Kapitel 5": {"Alltag": ["schlafen, er schläft", "duschen", "besuchen", "treffen, er trifft", "die Nachricht", "die Uni", "in die Uni/Schule fahren", "die Mensa, Mensen", "die Bibliothek", "die Musikschule", "die Hausaufgabe", "die Zeitung", "am Computer arbeiten", "die Homepage", "der Stress (Sg.)"], "Uhrzeit": ["die Uhr", "Wie viel Uhr ist es?", "Wie spät ist es?", "Es ist vier Uhr.", "Es ist Viertel vor vier.", "Es ist Viertel nach vier.", "Es ist halb fünf.", "Es ist kurz vor vier.", "Es ist zehn nach vier.", "um (um drei Uhr)", "die Sekunde", "die Minute", "die Stunde", "eine halbe Stunde", "die Verspätung", "pünktlich", "zu spät kommen"], "Familie": ["die Familie", "der/die Verwandte", "das Baby", "das Kind", "der Junge", "das Mädchen", "der Sohn", "die Tochter", "die Mutter", "der Vater", "die Eltern (Pl.)", "der Bruder", "die Schwester", "die Geschwister (Pl.)", "die Großmutter", "der Großvater", "die Oma", "der Opa", "die Großeltern (Pl.)", "der Mann (mein Mann)", "die Frau (meine Frau)", "ledig", "verheiratet"], "Termine und Verabredungen": ["die Zeit", "Hast du morgen Zeit?", "telefonieren", "Auf Wiederhören.", "am (am Montag)", "von ... bis (von Montag bis Freitag)", "können, er kann", "müssen, er muss", "wollen, er will", "die Party", "eine Party machen", "die Bar", "sitzen", "der Kalender", "die Besprechung", "Was kann ich für Sie tun?", "Ich hätte gern einen Termin.", "Haben Sie am ... einen Termin frei?", "Geht es am ... um ...?", "Nein, das geht leider nicht."], "andere wichtige Wörter": ["krank", "der Sport (Sg.)", "der Ball", "das Motorrad", "die Geige", "Geige spielen", "das Saxofon", "die Trompete", "der Hund", "süß (Euer Hund ist so süß.)", "die Idee", "Gute Idee!", "liebe Grüße", "willkommen", "cool", "falsch", "das Problem", "die Praxis, Praxen", "schade", "Tut mir leid.", "Bitte entschuldigen Sie.", "Macht nichts."]}, "Kapitel 6": {"Freizeitaktivitäten": ["ins Fitness-Studio gehen", "klettern", "Ski fahren", "wandern", "der Ausflug", "einen Ausflug machen", "die Fahrradtour", "das Picknick"], "Feste/Partys": ["das Fest", "feiern", "der Geburtstag", "werden, er wird (Sie wird 30 Jahre alt.)", "schenken", "das Geschenk", "ein|laden", "das Datum (Sg.)", "die Überraschung", "Achtung!", "wissen, er weiß (Achtung, sie weiß nichts.)", "mit|bringen", "Spaß haben", "hoffentlich (Hoffentlich kommt ihr.)"], "eine Mail schreiben": ["die Mail", "schicken", "der Betreff", "die Anrede", "herzliche Grüße"], "Speisen und Getränke": ["die Schorle", "das Eis (Sg.)", "die Salami", "das Schnitzel", "die Tomatensuppe", "der Sandwich"], "bestellen und bezahlen": ["der Durst (Sg.)", "der Hunger (Sg.)", "die Speisekarte", "die Bestellung", "bestellen", "bringen", "Für wen ist ...?", "bezahlen", "zahlen (Zahlen, bitte.)", "die Rechnung", "Zusammen oder getrennt?", "das Trinkgeld (Sg.)", "geben, er gibt", "Stimmt so."], "Auf dem Tisch": ["die Gabel", "das Messer", "der Löffel", "das Glas", "die Tasse", "der Teller", "die Serviette"], "Lokale": ["die Kneipe", "das Kaffeehaus", "das Lokal", "der Biergarten", "die Bank", "die Selbstbedienung (Sg.)", "geöffnet", "draußen (Man kann draußen sitzen.)"], "Veranstaltungen": ["das Programm", "los sein (Was ist los?)", "(keine) Lust haben", "mit|kommen", "der Treffpunkt", "der Eintritt", "die Anmeldung", "beginnen", "enden", "die Karte"], "andere wichtige Wörter": ["ab|holen", "an|fangen, er fängt an", "an|rufen", "auf|hören", "mit|machen", "glauben", "laufen, er läuft", "genießen", "passieren", "zu Hause", "kalt", "warm", "wieder", "typisch", "verboten", "überall", "besonders (Was ist besonders?)", "der Spielplatz", "früh", "Warum nicht?", "Alles klar?", "Wann denn?", "Klingt gut."]}, "Kapitel 7": {"Arbeit und Beruf": ["der Arbeitsalltag (Sg.)", "der Bäcker", "die Zahnarzt", "der Hausmeister", "der Mitarbeiter", "die Mitarbeiterin", "das Praktikum, Praktika", "der Bericht", "die Präsentation", "erklären", "der Fehler", "korrigieren", "interessieren", "diskutieren", "die Pause", "der Urlaub"], "Medien": ["die Medien (Pl.)", "hoch|fahren, er fährt hoch", "an|machen", "aus|machen", "die Datei", "öffnen (eine Datei öffnen)", "speichern", "drucken", "der Drucker", "das Passwort", "ein|geben, er gibt ein", "der Blog", "der Akku", "leer (Mein Akku ist gleich leer.)", "das WLAN (Sg.)", "das Netz (Ich habe kein Netz.)", "offline"], "in der Bank": ["die Bank", "der Automat", "holen (Ich muss noch Geld holen.)", "das Konto, Konten", "überweisen", "die Kontonummer", "die Kreditkarte", "bar (Zahlen Sie bar oder mit Karte?)"], "Briefe schreiben": ["der Brief", "die Post (Sg.)", "der Absender", "der Empfänger", "an (Ich schreibe einen Brief an Frau Müller.)", "Sehr geehrte Damen und Herren, ...", "Mit freundlichen Grüßen", "die Unterschrift"], "im Club": ["das Mitglied", "kennen|lernen", "der Kontakt", "das Lied", "die Musikgruppe", "die Spezialität"], "Small Talk machen": ["der Small Talk", "reden", "das Leben", "aktuell", "neutral", "der Aufzug", "die Politik (Sg.)", "die Serie"], "andere wichtige Wörter": ["die Religion", "die meisten (Das mögen die meisten Leute nicht.)", "langweilig", "heiß", "schrecklich", "oder (Das ist schrecklich, oder?)", "Alles klar.", "So ein Zufall!", "Bis dann!", "doch (Kommst du heute nicht? – Doch.)", "der/die Erwachsene", "nach Hause", "der Nachbar", "die Nachbarin", "das Paket", "an|nehmen, er nimmt an", "das Sprachinstitut", "bedeuten (Was bedeutet das?)", "dauern", "bleiben", "denken", "mit|nehmen, er nimmt mit", "verwenden", "anders", "beliebt", "leicht", "schwer", "gar (Das ist gar nicht schwer.)", "eigentlich", "endlich", "gestern", "später", "wohin (Wohin gehst du?)", "zu (Meine Chefin nimmt mich zu Kunden mit.)"]}, "Kapitel 8": {"fit und gesund": ["fit", "sportlich", "die Sportlerin", "gesund leben", "an|ziehen (die Sportschuhe anziehen)", "weiter|machen", "schaffen", "egal (Egal, ich schaffe das.)", "regelmäßig (regelmäßig Sport machen)", "täglich", "faul", "aktiv", "gefährlich", "müde", "hungrig", "richtig (Ich bin richtig hungrig.)", "vergessen, er vergisst", "vermissen", "die Süßigkeit", "mindestens"], "persönliche Angaben": ["das Alter (Sg.)", "die Größe", "das Gewicht (Sg.)", "wiegen", "schwer (Wie schwer ist er?)"], "Körperteile": ["der Körper", "der Kopf", "der Hals", "der Bauch", "der Rücken", "der Arm", "die Hand", "der Finger", "das Bein", "das Knie", "der Fuß", "das Gesicht", "der Mund", "der Zahn", "das Auge", "das Ohr", "die Nase", "riechen", "das Haar"], "nach dem Unfall": ["der Unfall", "der/die Verletzte", "verletzt", "weh|tun, es tut weh", "der Schmerz", "die Wunde", "sauber machen", "der Verband", "das Pflaster", "die Salbe", "das Rezept", "bekommen (Frau Pohn bekommt ein Rezept.)", "die Apotheke", "bewegen (Bewegen Sie das Bein nur wenig.)", "sollen, er soll (Ich soll den Verband wechseln.)", "Gute Besserung!"], "Besuch beim Arzt": ["der Doktor", "die Krankheit", "der Schnupfen", "das Fieber (Sg.)", "husten", "erkältet sein"], "im Krankenhaus": ["total (Ich bin total erkältet.)", "schlecht (Mir ist schlecht.)", "die ...schmerzen (Pl.)", "dürfen, er darf (Ich darf nicht baden.)", "erlaubt", "verboten", "rauchen (Rauchen Sie nicht!)", "ein Medikament nehmen", "die Tablette", "der Saft", "gegen (Er nimmt einen Saft gegen den Husten.)", "der Tropfen", "die Spritze", "das Hausmittel", "die Kontrolle", "Danke für Ihre Hilfe!"], "im Kurs": ["wiederholen", "auf|schreiben", "vor|lesen, er liest vor", "auf|machen", "die Tafel", "das Fenster (Mach bitte das Fenster auf.)", "leise", "ruhig"], "andere wichtige Wörter": ["das Ergebnis", "anstrengend (Die Arbeit ist anstrengend.)", "die Freizeit (Sg.)", "das Experiment", "der Tipp", "jemand (Hat jemand einen Tipp für mich?)", "ein|schlafen, er schläft ein", "versuchen", "baden", "glücklich", "perfekt (Für mich ist das perfekt.)", "sofort", "Hurra!", "sicher (Ich bin sicher die Erste.)", "die App"]}, "Kapitel 9": {"Wohnformen": ["die Wohnung", "das Hochhaus", "die WG (die Wohngemeinschaft)", "das Apartment", "das Reihenhaus"], "Zimmer": ["der Raum", "das Bad", "die Dusche", "der Flur", "die Küche", "das Schlafzimmer", "das Wohnzimmer", "das Kinderzimmer", "der Balkon", "die Terasse", "der Garten", "die Treppe", "die Tür", "die Decke"], "eine Wohnung beschreiben": ["das Erdgeschoss", "der Stock (im zweiten Stock)", "die Lage (Sg.) (Die Lage ist zentral.)", "die Nähe (Sg.)", "das Zentrum, Zentren", "zentral", "direkt (Die Wohnung ist direkt am Bahnhof.)", "weit (Es ist nicht weit zur Uni.)", "billig", "günstig", "dunkel", "hell", "gemütlich", "elegant", "der Blick (Der Blick aus dem Fenster ist toll.)", "aus|sehen, er sieht aus (Die Wohnung sieht schön aus.)"], "Möbel und Geräte": ["die Möbel (Pl.)", "das Gerät", "die Lampe", "das Licht", "die Pflanze", "das Regal", "der Schrank", "der Schreibtisch", "der Sessel", "das Sofa", "der Stuhl", "der Tisch", "der Teppich", "das Bett", "der Fernseher", "der Herd", "die Kaffeemaschine", "der Kühlschrank", "die Spülmaschine", "die Waschmaschine"], "Umzug": ["die Anzeige", "besichtigen", "unterschreiben (den Vertrag unterschreiben)", "der Vertrag", "vermieten", "mieten", "die Miete", "der Vermieter", "packen", "ziehen (in eine Wohnung ziehen)", "um|ziehen", "der Umzug", "stellen (Ich stelle den Schrank ins Bad.)", "die Feier"], "Ortsangaben": ["hinter", "neben", "über", "unter", "zwischen"], "Farben": ["blau", "braun", "gelb", "grau", "grün", "lila", "orange", "rot", "schwarz", "weiß"], "andere wichtige Wörter": ["schließen (Bitte schließ die Tür.)", "bald", "nie", "ein paar (ein paar Jahre)", "genau", "hässlich", "jung", "zufrieden", "besonders", "positiv", "negativ", "oben", "die Blume", "der Baum", "das Holz (Die Treppen sind aus Holz.)", "das Heft", "der Wunsch", "der Glückwunsch", "nicht mehr", "zurzeit"]}};
+const BANGLA = {"der Name": ["নাম", "নামে"], "mein (Mein Name ist ...)": ["আমার (আমার নাম হলো...)", "মাইন (মাইন নামে ইস্ট...)"], "dein (Wie ist dein Name?)": ["তোমার (তোমার নাম কী?)", "দাইন (ভি ইস্ট দাইন নামে?)"], "Ihr (Wie ist Ihr Name?)": ["আপনার (আপনার নাম কী?)", "ইয়ার (ভি ইস্ট ইয়ার নামে?)"], "der Vorname": ["প্রথম নাম", "ফোরনামে"], "der Nachname": ["পদবি/শেষ নাম", "নাখনামে"], "buchstabieren": ["বানান করা", "বুখস্টাবিয়েরেন"], "heißen": ["নাম হওয়া", "হাইসেন"], "sein, er ist": ["হওয়া, সে হয়", "জাইন, এয়ার ইস্ট"], "wohnen": ["বাস করা", "ভোনেন"], "in (Ich wohne in ...)": ["মধ্যে (আমি বাস করি...)", "ইন (ইশ ভোনে ইন...)"], "die Stadt": ["শহর", "স্টাট"], "wie (Wie heißt du?)": ["কেমন/কী (তোমার নাম কী?)", "ভি (ভি হাইস্ট ডু?)"], "wer (Wer bist du?)": ["কে (তুমি কে?)", "ভেয়ার (ভেয়ার বিস্ট ডু?)"], "wo (Wo wohnst du?)": ["কোথায় (তুমি কোথায় থাকো?)", "ভো (ভো ভনস্ট ডু?)"], "woher (Woher kommst du?)": ["কোথা থেকে (তুমি কোথা থেকে এসেছ?)", "ভোহেয়ার (ভোহেয়ার কমস্ট ডু?)"], "Das ist Herr/Frau ...": ["ইনি হলেন মিস্টার/মিসেস...", "দাস ইস্ট হের/ফ্রাউ..."], "die E-Mail-Adresse": ["ইমেইল ঠিকানা", "ই-মেইল-আদ্রেসে"], "die Handynummer": ["মোবাইল নম্বর", "হান্ডিনুমার"], "die Telefonnummer": ["টেলিফোন নম্বর", "টেলেফোননুমার"], "Hallo!": ["হ্যালো!", "হালো"], "Guten Morgen.": ["শুভ সকাল।", "গুটেন মর্গেন"], "Guten Tag.": ["শুভ দিন।", "গুটেন টাগ"], "Guten Abend.": ["শুভ সন্ধ্যা।", "গুটেন আবেন্ট"], "Gute Nacht.": ["শুভ রাত্রি।", "গুটে নাখট"], "Tschüs.": ["বিদায়।", "চুস"], "Ciao.": ["বিদায়/চাও।", "চাও"], "Bis bald!": ["শীঘ্রই দেখা হবে!", "বিস বাল্ট"], "Auf Wiedersehen.": ["আবার দেখা হবে।", "আউফ ভিডারজেন"], "Deutschland": ["জার্মানি", "ডয়েচলান্ড"], "Österreich": ["অস্ট্রিয়া", "ওস্টারাইশ"], "die Schweiz": ["সুইজারল্যান্ড", "শোভাইৎস"], "das Land": ["দেশ", "লান্ট"], "kommen": ["আসা", "কমেন"], "aus (Er kommt aus Spanien.)": ["থেকে (সে স্পেন থেকে এসেছে।)", "আউস (এয়ার কমট আউস স্পানিয়েন)"], "die Sprache": ["ভাষা", "স্প্রাখে"], "lernen": ["শেখা", "লেয়ারনেন"], "sprechen, er spricht": ["কথা বলা, সে বলে", "স্প্রেখেন, এয়ার স্প্রিশট"], "Welche Sprachen sprechen Sie?": ["আপনি কোন ভাষা বলেন?", "ভেলশে স্প্রাখেন স্প্রেখেন জি?"], "Deutsch": ["জার্মান ভাষা", "ডয়েচ"], "Wie geht's?": ["কেমন আছো?", "ভি গেহটস?"], "Sehr gut.": ["খুব ভালো।", "জেয়ার গুট"], "Danke, gut.": ["ধন্যবাদ, ভালো।", "ডাঙ্কে, গুট"], "Ganz gut.": ["মোটামুটি ভালো।", "গান্স গুট"], "die Zahl": ["সংখ্যা", "জাল"], "null": ["শূন্য", "নুল"], "eins": ["এক", "আইনস"], "zwei": ["দুই", "ৎসভাই"], "drei": ["তিন", "ড্রাই"], "vier": ["চার", "ফির"], "fünf": ["পাঁচ", "ফুনফ"], "sechs": ["ছয়", "জেক্স"], "sieben": ["সাত", "জিবেন"], "acht": ["আট", "আখট"], "neun": ["নয়", "নয়েন"], "zehn": ["দশ", "ৎসেন"], "elf": ["এগারো", "এল্ফ"], "zwölf": ["বারো", "ৎসভোল্ফ"], "dreizehn": ["তেরো", "ড্রাইৎসেন"], "vierzehn": ["চৌদ্দ", "ফিয়ারৎসেন"], "fünfzehn": ["পনেরো", "ফুনফৎসেন"], "sechzehn": ["ষোলো", "জেখৎসেন"], "siebzehn": ["সতেরো", "জিপৎসেন"], "achtzehn": ["আঠারো", "আখটৎসেন"], "neunzehn": ["উনিশ", "নয়েনৎসেন"], "zwanzig": ["বিশ", "ৎসভানৎসিশ"], "fragen": ["প্রশ্ন করা", "ফ্রাগেন"], "die Antwort": ["উত্তর", "আন্টভর্ট"], "hören": ["শোনা", "হোয়রেন"], "lesen, er liest": ["পড়া, সে পড়ে", "লেজেন, এয়ার লিস্ট"], "machen": ["করা", "মাখেন"], "notieren": ["নোট করা", "নোটিরেন"], "raten, er rät": ["অনুমান করা, সে অনুমান করে", "রাটেন, এয়ার রেট"], "sagen": ["বলা", "জাগেন"], "sammeln": ["সংগ্রহ করা", "জামেলন"], "schreiben": ["লেখা", "শ্রাইবেন"], "spielen": ["খেলা", "শ্পিলেন"], "zu|ordnen": ["মিলানো/সাজানো", "ৎসু-অর্ডনেন"], "der Partner": ["সহযোগী/পার্টনার পুরুষ", "পার্টনার"], "die Partnerin": ["সহযোগী/পার্টনার মহিলা", "পার্টনারিন"], "die Person": ["ব্যক্তি", "পেয়ারজোন"], "der Text": ["টেক্সট/লেখা", "টেক্সট"], "das Wort": ["শব্দ", "ভর্ট"], "die Autobahn": ["হাইওয়ে/মহাসড়ক", "আউটোবান"], "die Flasche": ["বোতল", "ফ্লাশে"], "der Kindergarten": ["কিন্ডারগার্টেন/শিশু বিদ্যালয়", "কিন্ডারগার্টেন"], "der Koffer": ["সুটকেস", "কফার"], "Entschuldigung, noch einmal, bitte.": ["দুঃখিত, আরেকবার বলুন প্লিজ।", "এন্টশুলডিগুং, নখ আইনমাল, বিটে"], "Wie bitte?": ["কী বললেন?", "ভি বিটে?"], "Das verstehe ich nicht.": ["আমি এটা বুঝি না।", "দাস ফেয়ারস্টেহে ইশ নিশট"], "Bitte ein bisschen langsamer.": ["প্লিজ একটু আস্তে বলুন।", "বিটে আইন বিসশেন লাংজামার"], "das Hobby": ["শখ", "হবি"], "das Buch": ["বই", "বুখ"], "das Café": ["ক্যাফে", "কাফে"], "der Computer": ["কম্পিউটার", "কম্পিউটার"], "die Verabredung": ["সাক্ষাতের সময়/অ্যাপয়েন্টমেন্ট", "ফেয়ারআপ্রেডুং"], "wann (Wann gehen wir ins Café?)": ["কখন (আমরা কখন ক্যাফেতে যাব?)", "ভান (ভান গেহেন ভির ইনস কাফে?)"], "der Freund": ["বন্ধু (পুরুষ)", "ফ্রয়েন্ড"], "die Freundin": ["বান্ধবী (মহিলা)", "ফ্রয়েন্ডিন"], "die Leute (Pl.)": ["মানুষজন (বহুবচন)", "লয়টে"], "der Fußball (Sg.)": ["ফুটবল", "ফুসবাল"], "Tennis spielen": ["টেনিস খেলা", "টেনিস শ্পিলেন"], "joggen": ["জগিং করা", "ইয়গেন"], "das Kino": ["সিনেমা হল", "কিনো"], "das Theater": ["থিয়েটার", "টেআটার"], "das Museum, Museen": ["জাদুঘর, জাদুঘরসমূহ", "মুজেউম, মুজেয়েন"], "die Musik (Sg.)": ["সংগীত", "মুজিক"], "das Schwimmbad": ["সুইমিং পুল", "শোভিমবাড"], "schwimmen": ["সাঁতার কাটা", "শোভিমেন"], "fotografieren": ["ছবি তোলা", "ফোটোগ্রাফিরেন"], "das Foto": ["ছবি/ফটো", "ফোটো"], "kochen": ["রান্না করা", "কখেন"], "reisen": ["ভ্রমণ করা", "রাইজেন"], "singen": ["গান গাওয়া", "জিঙেন"], "tanzen": ["নাচা", "তানৎসেন"], "frei|haben, er hat frei": ["ছুটি থাকা, তার ছুটি আছে", "ফ্রাই-হাবেন, এয়ার হাট ফ্রাই"], "arbeiten": ["কাজ করা", "আরবাইটেন"], "bei (Ich arbeite bei ...)": ["কাছে/তে (আমি কাজ করি...)", "বাই (ইশ আরবাইটে বাই...)"], "der Beruf": ["পেশা", "বেরুফ"], "von": ["থেকে/এর", "ফন"], "Was sind Sie von Beruf?": ["আপনার পেশা কী?", "ভাস জিন্ড জি ফন বেরুফ?"], "der Arzt": ["ডাক্তার (পুরুষ)", "আর্ৎসট"], "die Ärztin": ["ডাক্তার (মহিলা)", "এয়ারৎসটিন"], "das Krankenhaus": ["হাসপাতাল", "ক্রাঙ্কেনহাউস"], "der Friseur": ["নাপিত/হেয়ারড্রেসার (পুরুষ)", "ফ্রিজোয়ার"], "die Friseurin": ["হেয়ারড্রেসার (মহিলা)", "ফ্রিজোয়ারিন"], "die Handwerkerin": ["কারিগর (মহিলা)", "হান্ডভেয়ারকেরিন"], "der Journalist": ["সাংবাদিক", "জুরনালিস্ট"], "die Kellnerin": ["ওয়েট্রেস", "কেলনারিন"], "der Koch": ["রাঁধুনি (পুরুষ)", "কখ"], "die Köchin": ["রাঁধুনি (মহিলা)", "কোশিন"], "der Krankenpfleger": ["নার্স (পুরুষ)", "ক্রাঙ্কেনফ্লেগার"], "das Restaurant": ["রেস্তোরাঁ", "রেস্তোরাঁ"], "der Kollege": ["সহকর্মী (পুরুষ)", "কোলেগে"], "die Kollegin": ["সহকর্মী (মহিলা)", "কোলেগিন"], "die Firma, Firmen": ["কোম্পানি, কোম্পানিসমূহ", "ফিরমা, ফিরমেন"], "der Lehrer": ["শিক্ষক (পুরুষ)", "লেয়ারার"], "die Schule": ["স্কুল", "শুলে"], "der Kurs": ["কোর্স", "কুর্স"], "die Mechanikerin": ["মেকানিক (মহিলা)", "মেখানিকেরিন"], "der Polizist": ["পুলিশ", "পোলিৎসিস্ট"], "die Studentin": ["ছাত্রী", "স্টুডেন্টিন"], "studieren": ["পড়াশোনা করা/বিশ্ববিদ্যালয়ে পড়া", "স্টুডিরেন"], "die Universität": ["বিশ্ববিদ্যালয়", "উনিভেয়ারজিটেট"], "das Seminar": ["সেমিনার", "জেমিনার"], "der Taxifahrer": ["ট্যাক্সিচালক", "ট্যাক্সিফারার"], "das Taxi": ["ট্যাক্সি", "ট্যাক্সি"], "das Auto": ["গাড়ি", "আউটো"], "fahren, er fährt": ["চালানো/যাওয়া, সে চালায়", "ফারেন, এয়ার ফেয়ার্ট"], "die Verkäuferin": ["বিক্রেতা (মহিলা)", "ফেয়ারকয়ফেরিন"], "der Abend": ["সন্ধ্যা", "আবেন্ট"], "der Nachmittag": ["বিকেল", "নাখমিটাগ"], "der Moment": ["মুহূর্ত", "মোমেন্ট"], "im Moment": ["এই মুহূর্তে", "ইম মোমেন্ট"], "die Stunde": ["ঘণ্টা", "শটুন্ডে"], "der Tag": ["দিন", "টাগ"], "die Woche": ["সপ্তাহ", "ভোখে"], "pro Woche": ["প্রতি সপ্তাহে", "প্রো ভোখে"], "das Wochenende": ["সাপ্তাহিক ছুটি/উইকেন্ড", "ভোখেনএন্ডে"], "der Wochentag": ["সপ্তাহের দিন", "ভোখেনটাগ"], "das Jahr": ["বছর", "ইয়ার"], "alt": ["বয়স্ক/পুরনো", "আল্ট"], "Ich bin ... Jahre alt.": ["আমার বয়স... বছর।", "ইশ বিন... ইয়ারে আল্ট"], "Montag": ["সোমবার", "মোনটাগ"], "Dienstag": ["মঙ্গলবার", "ডিনসটাগ"], "Mittwoch": ["বুধবার", "মিটভোখ"], "Donnerstag": ["বৃহস্পতিবার", "ডনারসটাগ"], "Freitag": ["শুক্রবার", "ফ্রাইটাগ"], "Samstag": ["শনিবার", "জামসটাগ"], "Sonntag": ["রবিবার", "জোনটাগ"], "der Termin": ["অ্যাপয়েন্টমেন্ট", "টেয়ারমিন"], "morgen": ["আগামীকাল", "মর্গেন"], "nachts": ["রাতে", "নাখটস"], "meistens": ["সাধারণত", "মাইসটেনস"], "noch": ["এখনও", "নখ"], "die Information": ["তথ্য", "ইনফরমাৎসিওন"], "der Familienname": ["পারিবারিক নাম/পদবি", "ফামিলিয়েননামে"], "die Adresse": ["ঠিকানা", "আদ্রেসে"], "die Straße": ["রাস্তা", "শট্রাসে"], "die Hausnummer": ["বাড়ির নম্বর", "হাউসনুমার"], "die Postleitzahl": ["পোস্টাল কোড", "পোস্টলাইটৎসাল"], "der Wohnort": ["বসবাসের স্থান", "ভোনঅর্ট"], "das Geburtsdatum": ["জন্ম তারিখ", "গেবুর্টসডাটুম"], "der Geburtsort": ["জন্মস্থান", "গেবুর্টসঅর্ট"], "männlich": ["পুরুষ", "মেনলিশ"], "weiblich": ["মহিলা", "ভাইপলিশ"], "das Formular": ["ফর্ম", "ফরমুলার"], "ja": ["হ্যাঁ", "ইয়া"], "nein": ["না", "নাইন"], "die Notiz (Machen Sie Notizen.)": ["নোট (নোট নিন।)", "নোটিৎস (মাখেন জি নোটিৎসেন)"], "das Beispiel": ["উদাহরণ", "বাইশপিল"], "der Schlüssel": ["চাবি", "শ্লুসেল"], "das Wörterbuch": ["অভিধান", "ভর্টারবুখ"], "das Zimmer": ["রুম/কক্ষ", "ৎসিমার"], "haben, er hat (Ich habe vier Seminare pro Woche.)": ["থাকা, তার আছে (আমার সপ্তাহে চারটি সেমিনার আছে।)", "হাবেন, এয়ার হাট"], "passen": ["মানানসই হওয়া", "পাসেন"], "suchen": ["খোঁজা", "জুখেন"], "warten": ["অপেক্ষা করা", "ভারটেন"], "alle": ["সবাই/সব", "আলে"], "hier": ["এখানে", "হির"], "gern": ["আনন্দের সাথে", "গেয়ার্ন"], "Ich schwimme gern.": ["আমি সাঁতার কাটতে পছন্দ করি।", "ইশ শোভিমে গেয়ার্ন"], "gehen": ["যাওয়া", "গেহেন"], "Es geht so.": ["মোটামুটি চলছে।", "এস গেহট জো"], "leider": ["দুর্ভাগ্যবশত", "লাইডার"], "Das geht leider nicht.": ["দুর্ভাগ্যবশত এটা সম্ভব না।", "দাস গেহট লাইডার নিশট"], "groß": ["বড়", "গ্রোস"], "lustig": ["মজার", "লুসটিশ"], "neu": ["নতুন", "নয়"], "super": ["চমৎকার", "জুপার"], "toll": ["দারুণ", "টল"], "viel": ["অনেক", "ফিল"], "wirklich": ["সত্যিই", "ভিয়ার্কলিশ"], "der Mensch": ["মানুষ", "মেনশ"], "das Haus": ["বাড়ি", "হাউস"], "das Rathaus": ["নগর ভবন/টাউন হল", "রাটহাউস"], "das Konzerthaus": ["কনসার্ট হল", "কনৎসেয়ার্টহাউস"], "die Kirche": ["গির্জা", "কিয়ার্খে"], "der Turm": ["টাওয়ার/মিনার", "টুরম"], "das Hotel": ["হোটেল", "হোটেল"], "die Brücke": ["সেতু/ব্রিজ", "ব্রুকে"], "der Park": ["পার্ক", "পার্ক"], "der Markt": ["বাজার", "মারক্ট"], "der Bahnhof": ["রেলওয়ে স্টেশন", "বানহোফ"], "der Hafen": ["বন্দর", "হাফেন"], "der See": ["হ্রদ", "জে"], "der Fluss": ["নদী", "ফ্লুস"], "das Meer": ["সমুদ্র", "মেয়ার"], "sehen, er sieht (Da sieht man den Hafen.)": ["দেখা, সে দেখে (ওখান থেকে বন্দর দেখা যায়।)", "জেহেন, এয়ার জিট"], "da (Da ist das Hotel.)": ["ওখানে (ওখানে হোটেল আছে।)", "দা (দা ইস্ট দাস হোটেল)"], "Das ist ...": ["এটা হলো...", "দাস ইস্ট..."], "interessant": ["আকর্ষণীয়", "ইন্টেরেসান্ট"], "schön": ["সুন্দর", "শোয়েন"], "die Station": ["স্টেশন", "স্টাৎসিওন"], "der Ort": ["জায়গা/স্থান", "অর্ট"], "der Meter": ["মিটার", "মেটার"], "der Kilometer": ["কিলোমিটার", "কিলোমেটার"], "lang (Die Brücke ist 12 Kilometer lang.)": ["লম্বা (সেতুটি ১২ কিলোমিটার লম্বা।)", "লাং"], "breit (Das Rathaus ist 111 Meter breit.)": ["চওড়া (টাউন হলটি ১১১ মিটার চওড়া।)", "ব্রাইট"], "hoch (Der Turm ist 132 Meter hoch.)": ["উঁচু (টাওয়ারটি ১৩২ মিটার উঁচু।)", "হোখ"], "über (Das Haus ist über 100 Jahre alt.)": ["এর বেশি (বাড়িটি ১০০ বছরের বেশি পুরনো।)", "উবার"], "die Kosten (Pl.)": ["খরচ (বহুবচন)", "কসটেন"], "der Euro": ["ইউরো", "অয়রো"], "zu Fuß gehen": ["হেঁটে যাওয়া", "ৎসু ফুস গেহেন"], "das Fahrrad": ["সাইকেল", "ফারাড"], "der Bus": ["বাস", "বুস"], "die Straßenbahn": ["ট্রাম", "শট্রাসেনবান"], "der Zug": ["ট্রেন", "ৎসুগ"], "die U-Bahn": ["আন্ডারগ্রাউন্ড ট্রেন", "উ-বান"], "die S-Bahn": ["সাবার্বান ট্রেন", "এস-বান"], "das Schiff": ["জাহাজ", "শিফ"], "das Flugzeug": ["বিমান", "ফ্লুগৎসয়গ"], "die Fahrkarte": ["টিকেট", "ফারকার্টে"], "schnell": ["দ্রুত", "শনেল"], "nach (Der Zug fährt nach Berlin.)": ["দিকে (ট্রেনটি বার্লিনের দিকে যায়।)", "নাখ"], "der Weg": ["রাস্তা/পথ", "ভেগ"], "Wo ist bitte ...?": ["...কোথায় আছে দয়া করে বলুন?", "ভো ইস্ট বিটে...?"], "Das ist ganz einfach.": ["এটা খুবই সহজ।", "দাস ইস্ট গান্স আইনফাখ"], "rechts": ["ডানদিকে", "রেশটস"], "links": ["বামদিকে", "লিঙ্কস"], "geradeaus": ["সোজা/সরাসরি", "গেরাডেআউস"], "Gehen Sie zuerst rechts und dann geradeaus.": ["প্রথমে ডানে যান, তারপর সোজা যান।", "গেহেন জি ৎসুয়েয়ার্স্ট রেশটস উন্ড দান গেরাডেআউস"], "richtig (Ist das richtig?)": ["সঠিক (এটা কি সঠিক?)", "রিশটিশ"], "genau (Ja, genau!)": ["ঠিক/সঠিক (হ্যাঁ, ঠিক তাই!)", "গেনাউ"], "die Mitte (Sg.)": ["মাঝখান", "মিটে"], "Wo ist das? – Genau in der Mitte.": ["এটা কোথায়? - ঠিক মাঝখানে।", "ভো ইস্ট দাস? গেনাউ ইন দেয়ার মিটে"], "also (Also, zuerst links und ...)": ["তাহলে (তাহলে, প্রথমে বামে এবং...)", "আলজো"], "zeigen": ["দেখানো", "ৎসাইগেন"], "der Plan": ["পরিকল্পনা/মানচিত্র", "প্লান"], "zeichnen": ["আঁকা", "ৎসাইশনেন"], "der Start (Sg.)": ["শুরু/স্টার্ট", "স্টার্ট"], "das Ziel": ["লক্ষ্য/গন্তব্য", "ৎসিল"], "schon (Da ist schon das Hotel.)": ["ইতিমধ্যে (ওখানে ইতিমধ্যে হোটেল আছে।)", "শোন"], "das Event": ["ইভেন্ট", "ইভেন্ট"], "das Festival": ["উৎসব/ফেস্টিভাল", "ফেস্টিভাল"], "das Ticket": ["টিকেট", "টিকেট"], "das Publikum (Sg.)": ["দর্শকবৃন্দ", "পুবলিকুম"], "der Besucher": ["দর্শনার্থী (পুরুষ)", "বেজুখার"], "die Besucherin": ["দর্শনার্থী (মহিলা)", "বেজুখারিন"], "der Gast": ["অতিথি", "গাস্ট"], "das Konzert": ["কনসার্ট", "কনৎসেয়ার্ট"], "das Orchester": ["অর্কেস্ট্রা", "অরখেস্টার"], "der Chor": ["গায়কদল/কোরাস", "খোর"], "die Konzertkarte": ["কনসার্ট টিকেট", "কনৎসেয়ার্টকার্টে"], "der Film": ["চলচ্চিত্র", "ফিল্ম"], "der Schauspieler": ["অভিনেতা", "শাউশপিলার"], "die Schauspielerin": ["অভিনেত্রী", "শাউশপিলেরিন"], "der Star": ["তারকা", "স্টার"], "der Regisseur": ["পরিচালক (পুরুষ)", "রেজিসয়োর"], "die Regisseurin": ["পরিচালক (মহিলা)", "রেজিসয়োরিন"], "die Ausstellung": ["প্রদর্শনী", "আউসস্টেলুং"], "finden": ["খুঁজে পাওয়া", "ফিনডেন"], "Findest du das Konzert gut?": ["তুমি কি কনসার্টটা ভালো মনে করো?", "ফিনডেস্ট ডু দাস কনৎসেয়ার্ট গুট?"], "die Jahreszeit": ["ঋতু", "ইয়ারেসৎসাইট"], "der Frühling": ["বসন্ত", "ফ্রুলিং"], "der Sommer": ["গ্রীষ্ম", "জোমার"], "der Herbst": ["শরৎ", "হেয়ারবস্ট"], "der Winter": ["শীতকাল", "ভিন্টার"], "der Monat": ["মাস", "মোনাট"], "der Januar": ["জানুয়ারি", "ইয়ানুয়ার"], "der Februar": ["ফেব্রুয়ারি", "ফেব্রুয়ার"], "der März": ["মার্চ", "মেয়ার্ৎস"], "der April": ["এপ্রিল", "আপ্রিল"], "der Mai": ["মে", "মাই"], "der Juni": ["জুন", "ইউনি"], "der Juli": ["জুলাই", "ইউলি"], "der August": ["আগস্ট", "আউগুস্ট"], "der September": ["সেপ্টেম্বর", "জেপটেম্বার"], "der Oktober": ["অক্টোবর", "অক্টোবার"], "der November": ["নভেম্বর", "নোভেম্বার"], "der Dezember": ["ডিসেম্বর", "ডেৎসেম্বার"], "die Gruppe": ["দল", "গ্রুপে"], "das Bild": ["ছবি", "বিল্ড"], "das Plakat": ["পোস্টার", "প্লাকাট"], "das Glück (Sg.)": ["সৌভাগ্য", "গ্লুক"], "so (So ein Glück!)": ["এমন (এমন সৌভাগ্য!)", "জো"], "der Test": ["পরীক্ষা", "টেস্ট"], "heute (Heute ist kein Test!)": ["আজকে (আজকে কোনো পরীক্ষা নেই!)", "হয়টে"], "jetzt (Jetzt aber schnell!)": ["এখন (এখন তাড়াতাড়ি!)", "ইয়েৎসট"], "okay": ["ঠিক আছে", "ওকে"], "die Welt": ["পৃথিবী", "ভেল্ট"], "die Lösung": ["সমাধান", "লোজুং"], "ein Mal, zwei Mal, ...": ["একবার, দুইবার...", "আইন মাল, ৎসভাই মাল"], "das erste/zweite/... Mal": ["প্রথম/দ্বিতীয়/...বার", "দাস এয়ারস্টে/ৎসভাইটে মাল"], "Vielen Dank!": ["অনেক ধন্যবাদ!", "ফিলেন ডাঙ্ক"], "das Obst (Sg.)": ["ফল", "ওবস্ট"], "der Apfel": ["আপেল", "আপফেল"], "die Banane": ["কলা", "বানানে"], "die Birne": ["নাশপাতি", "বিয়ার্নে"], "das Gemüse (Sg.)": ["সবজি", "গেমুজে"], "die Gurke": ["শসা", "গুরকে"], "die Kartoffel": ["আলু", "কার্টফেল"], "der Salat": ["সালাদ", "জালাট"], "die Tomate": ["টমেটো", "টোমাটে"], "die Olive": ["জলপাই/অলিভ", "ওলিভে"], "die Zwiebel": ["পেঁয়াজ", "ৎসভিবেল"], "das Brot": ["রুটি", "ব্রোট"], "das Brötchen": ["ছোট গোলরুটি", "ব্রোটশেন"], "der Keks": ["বিস্কুট", "কেক্স"], "der Kuchen": ["কেক", "কুখেন"], "das Fleisch (Sg.)": ["মাংস", "ফ্লাইশ"], "das Hähnchen": ["মুরগি", "হেনশেন"], "der Schinken": ["শুয়োরের মাংস/হ্যাম", "শিঙ্কেন"], "die Wurst": ["সসেজ", "ভুরস্ট"], "das Würstchen": ["ছোট সসেজ", "ভুর্স্টশেন"], "die Butter (Sg.)": ["মাখন", "বুটার"], "der/das Joghurt": ["দই/ইয়োগার্ট", "ইয়োগুর্ট"], "der Käse (Sg.)": ["পনির", "কেজে"], "die Milch (Sg.)": ["দুধ", "মিলশ"], "die Sahne (Sg.)": ["ক্রিম", "জাহনে"], "der Pfeffer (Sg.)": ["গোলমরিচ", "ফেফার"], "das Salz": ["লবণ", "জাল্ৎস"], "der Zucker (Sg.)": ["চিনি", "ৎসুকার"], "der Essig": ["ভিনেগার", "এসিশ"], "das Öl": ["তেল", "ওল"], "die Nudel": ["নুডুলস", "নুডেল"], "der Reis (Sg.)": ["চাল/ভাত", "রাইস"], "das Ei": ["ডিম", "আই"], "der Fisch": ["মাছ", "ফিশ"], "die Schokolade": ["চকলেট", "শোকোলাডে"], "die Marmelade": ["জ্যাম", "মারমেলাডে"], "das Müsli": ["মুসলি", "মুসলি"], "das Getränk": ["পানীয়", "গেট্রেঙ্ক"], "das Wasser": ["পানি", "ভাসার"], "der Saft": ["জুস/সিরাপ", "জাফট"], "die Limonade": ["লেবুর শরবত/লেমনেড", "লিমোনাডে"], "die Cola": ["কোলা", "কোলা"], "der Kaffee": ["কফি", "কাফে"], "der Tee": ["চা", "টে"], "die Bäckerei": ["বেকারি", "বেকারাই"], "die Metzgerei": ["মাংসের দোকান", "মেটসগেরাই"], "der Supermarkt": ["সুপারমার্কেট", "জুপারমারক্ট"], "die Packung": ["প্যাকেট", "পাকুং"], "der Becher": ["পাত্র/মগ", "বেখার"], "die Dose": ["টিন/ক্যান", "ডোজে"], "das Stück": ["টুকরা", "শটুক"], "die Tüte": ["ব্যাগ/থলে", "টুটে"], "das Gramm (g)": ["গ্রাম", "গ্রাম"], "das Kilo(gramm) (kg)": ["কিলো(গ্রাম)", "কিলো(গ্রাম)"], "der Liter (l)": ["লিটার", "লিটার"], "kaufen": ["কেনা", "কাউফেন"], "ein|kaufen": ["কেনাকাটা করা", "আইন-কাউফেন"], "der Einkaufswagen": ["শপিং কার্ট/ট্রলি", "আইনকাউফসভাগেন"], "brauchen": ["দরকার হওয়া", "ব্রাউখেন"], "möchten, er möchte": ["চাওয়া, সে চায়", "ম্যোশটেন, এয়ার ম্যোশটে"], "Entschuldigung, wo finde ich ...?": ["দুঃখিত, আমি কোথায় পাব...?", "এন্টশুলডিগুং, ভো ফিনডে ইশ...?"], "Wo gibt es ...?": ["কোথায় পাওয়া যায়...?", "ভো গিপ্ট এস...?"], "kosten": ["দাম হওয়া", "কসটেন"], "der Preis": ["দাম", "প্রাইস"], "Das macht ... Euro, bitte.": ["মোট হয়েছে... ইউরো, দয়া করে।", "দাস মাখট... অয়রো, বিটে"], "der Kassenzettel": ["রসিদ", "কাসেনৎসেটেল"], "teuer": ["দামি", "টয়ার"], "wechseln": ["ভাঙানো/পরিবর্তন করা", "ভেখসেলন"], "Können Sie wechseln, bitte?": ["আপনি কি ভাঙিয়ে দিতে পারবেন?", "ক্যোনেন জি ভেখসেলন, বিটে?"], "Guten Appetit!": ["শুভ আহার!", "গুটেন আপেটিট"], "Danke, gleichfalls.": ["ধন্যবাদ, আপনিও।", "ডাঙ্কে, গ্লাইশফালস"], "das Essen": ["খাবার", "এসেন"], "essen, er isst": ["খাওয়া, সে খায়", "এসেন, এয়ার ইস্ট"], "trinken": ["পান করা", "ট্রিঙ্কেন"], "fertig (Das Essen ist gleich fertig.)": ["প্রস্তুত (খাবার প্রায় তৈরি।)", "ফেয়ারটিশ"], "mögen, er mag": ["পছন্দ করা, সে পছন্দ করে", "মোগেন, এয়ার মাগ"], "nehmen, er nimmt": ["নেওয়া, সে নেয়", "নেমেন, এয়ার নিমট"], "schmecken (Schmeckt's?)": ["স্বাদ পাওয়া (স্বাদ কেমন?)", "শমেকেন"], "lecker": ["সুস্বাদু", "লেকার"], "süß": ["মিষ্টি", "জুস"], "frisch": ["তাজা", "ফ্রিশ"], "das Frühstück": ["সকালের নাস্তা", "ফ্রুশটুক"], "frühstücken": ["সকালের নাস্তা করা", "ফ্রুশটুকেন"], "das Mittagessen": ["দুপুরের খাবার", "মিটাগএসেন"], "das Abendessen": ["রাতের খাবার", "আবেনডএসেন"], "das Gericht": ["খাবার/পদ", "গেরিশট"], "die Suppe": ["স্যুপ", "জুপে"], "die Pizza, -s/Pizzen": ["পিৎজা", "পিৎসা"], "die Pommes frites (Pl.)": ["ফ্রেঞ্চ ফ্রাই", "পম ফ্রিট"], "der Morgen": ["সকাল", "মর্গেন"], "morgens": ["সকালে", "মর্গেনস"], "der Mittag": ["দুপুর", "মিটাগ"], "mittags": ["দুপুরে", "মিটাগস"], "nachmittags": ["বিকেলে", "নাখমিটাগস"], "abends": ["সন্ধ্যায়", "আবেন্টস"], "die Nacht": ["রাত", "নাখট"], "die Einladung": ["নিমন্ত্রণ", "আইনলাডুং"], "nett": ["ভালো/সদয়", "নেট"], "gesund": ["সুস্থ", "গেজুন্ট"], "waschen, er wäscht": ["ধোয়া, সে ধোয়", "ভাশেন, এয়ার ভেশট"], "schneiden": ["কাটা", "শনাইডেন"], "grillen": ["গ্রিল করা", "গ্রিলেন"], "probieren": ["চেষ্টা করা/চেখে দেখা", "প্রোবিরেন"], "die Kantine": ["ক্যান্টিন", "কান্টিনে"], "wenig": ["কম", "ভেনিশ"], "vielleicht": ["হয়তো", "ফিলাইশট"], "wichtig": ["গুরুত্বপূর্ণ", "ভিশটিশ"], "schlafen, er schläft": ["ঘুমানো, সে ঘুমায়", "শলাফেন, এয়ার শলেফট"], "duschen": ["গোসল করা/শাওয়ার নেওয়া", "ডুশেন"], "besuchen": ["দেখতে যাওয়া", "বেজুখেন"], "treffen, er trifft": ["দেখা করা, সে দেখা করে", "ট্রেফেন, এয়ার ট্রিফট"], "die Nachricht": ["সংবাদ/খবর", "নাখরিশট"], "die Uni": ["বিশ্ববিদ্যালয়", "উনি"], "in die Uni/Schule fahren": ["বিশ্ববিদ্যালয়/স্কুলে যাওয়া", "ইন দি উনি/শুলে ফারেন"], "die Mensa, Mensen": ["ছাত্র ক্যান্টিন", "মেনজা, মেনজেন"], "die Bibliothek": ["পাঠাগার/লাইব্রেরি", "বিবলিওটেক"], "die Musikschule": ["সংগীত বিদ্যালয়", "মুজিকশুলে"], "die Hausaufgabe": ["গৃহকর্ম", "হাউসআউফগাবে"], "die Zeitung": ["খবরের কাগজ", "ৎসাইটুং"], "am Computer arbeiten": ["কম্পিউটারে কাজ করা", "আম কম্পিউটার আরবাইটেন"], "die Homepage": ["হোমপেজ", "হোমপেইজ"], "der Stress (Sg.)": ["চাপ/স্ট্রেস", "স্ট্রেস"], "die Uhr": ["ঘড়ি", "উয়ার"], "Wie viel Uhr ist es?": ["কয়টা বাজে?", "ভি ফিল উয়ার ইস্ট এস?"], "Wie spät ist es?": ["কয়টা বাজে?", "ভি শ্পেট ইস্ট এস?"], "Es ist vier Uhr.": ["এখন চারটা বাজে।", "এস ইস্ট ফির উয়ার"], "Es ist Viertel vor vier.": ["এখন চারটা বাজতে পনেরো মিনিট বাকি।", "এস ইস্ট ফিয়ারটেল ফোর ফির"], "Es ist Viertel nach vier.": ["এখন চারটা পনেরো বাজে।", "এস ইস্ট ফিয়ারটেল নাখ ফির"], "Es ist halb fünf.": ["এখন সাড়ে চারটা বাজে।", "এস ইস্ট হাল্ব ফুনফ"], "Es ist kurz vor vier.": ["চারটা বাজতে আর কিছুক্ষণ বাকি।", "এস ইস্ট কুর্ৎস ফোর ফির"], "Es ist zehn nach vier.": ["চারটা দশ বাজে।", "এস ইস্ট ৎসেন নাখ ফির"], "um (um drei Uhr)": ["টায় (তিনটায়)", "উম"], "die Sekunde": ["সেকেন্ড", "জেকুন্ডে"], "die Minute": ["মিনিট", "মিনুটে"], "eine halbe Stunde": ["আধা ঘণ্টা", "আইনে হালবে শটুন্ডে"], "die Verspätung": ["দেরি", "ফেয়ারশপেটুং"], "pünktlich": ["সময়মতো", "পুংকটলিশ"], "zu spät kommen": ["দেরি করে আসা", "ৎসু শপেট কমেন"], "die Familie": ["পরিবার", "ফামিলিয়ে"], "der/die Verwandte": ["আত্মীয়", "ফেয়ারভান্টে"], "das Baby": ["শিশু/বেবি", "বেইবি"], "das Kind": ["শিশু/ছেলেমেয়ে", "কিন্ট"], "der Junge": ["ছেলে", "ইউঙে"], "das Mädchen": ["মেয়ে", "মেটশেন"], "der Sohn": ["ছেলে (সন্তান)", "জোন"], "die Tochter": ["মেয়ে (সন্তান)", "টোখটার"], "die Mutter": ["মা", "মুটার"], "der Vater": ["বাবা", "ফাটার"], "die Eltern (Pl.)": ["বাবা-মা", "এলটার্ন"], "der Bruder": ["ভাই", "ব্রুডার"], "die Schwester": ["বোন", "শভেস্টার"], "die Geschwister (Pl.)": ["ভাইবোন", "গেশভিস্টার"], "die Großmutter": ["দাদি/নানি", "গ্রোসমুটার"], "der Großvater": ["দাদা/নানা", "গ্রোসফাটার"], "die Oma": ["দাদি/নানি", "ওমা"], "der Opa": ["দাদা/নানা", "ওপা"], "die Großeltern (Pl.)": ["দাদা-দাদি/নানা-নানি", "গ্রোসএলটার্ন"], "der Mann (mein Mann)": ["পুরুষ/স্বামী (আমার স্বামী)", "মান"], "die Frau (meine Frau)": ["মহিলা/স্ত্রী (আমার স্ত্রী)", "ফ্রাউ"], "ledig": ["অবিবাহিত", "লেডিশ"], "verheiratet": ["বিবাহিত", "ফেয়ারহাইরাটেট"], "die Zeit": ["সময়", "ৎসাইট"], "Hast du morgen Zeit?": ["তোমার কি আগামীকাল সময় আছে?", "হাস্ট ডু মর্গেন ৎসাইট?"], "telefonieren": ["ফোন করা", "টেলেফোনিরেন"], "Auf Wiederhören.": ["ফোনে বিদায় জানানো", "আউফ ভিডারহোয়রেন"], "am (am Montag)": ["এ/তে (সোমবারে)", "আম"], "von ... bis (von Montag bis Freitag)": ["থেকে...পর্যন্ত (সোমবার থেকে শুক্রবার)", "ফন...বিস"], "können, er kann": ["পারা, সে পারে", "ক্যোনেন, এয়ার কান"], "müssen, er muss": ["করতে হবে, তাকে করতে হবে", "মুসেন, এয়ার মুস"], "wollen, er will": ["চাওয়া, সে চায়", "ভোলেন, এয়ার ভিল"], "die Party": ["পার্টি", "পার্টি"], "eine Party machen": ["পার্টি করা", "আইনে পার্টি মাখেন"], "die Bar": ["বার", "বার"], "sitzen": ["বসা", "জিটসেন"], "der Kalender": ["ক্যালেন্ডার", "কালেন্ডার"], "die Besprechung": ["মিটিং/আলোচনা", "বেশপ্রেখুং"], "Was kann ich für Sie tun?": ["আমি আপনার জন্য কী করতে পারি?", "ভাস কান ইশ ফুয়ার জি টুন?"], "Ich hätte gern einen Termin.": ["আমি একটা অ্যাপয়েন্টমেন্ট চাই।", "ইশ হেটে গেয়ার্ন আইনেন টেয়ারমিন"], "Haben Sie am ... einen Termin frei?": ["আপনার কি...তারিখে সময় খালি আছে?", "হাবেন জি আম...আইনেন টেয়ারমিন ফ্রাই?"], "Geht es am ... um ...?": ["...তারিখে...টায় হবে কি?", "গেহট এস আম...উম...?"], "Nein, das geht leider nicht.": ["না, দুর্ভাগ্যবশত এটা সম্ভব না।", "নাইন, দাস গেহট লাইডার নিশট"], "krank": ["অসুস্থ", "ক্রাঙ্ক"], "der Sport (Sg.)": ["খেলাধুলা", "শপোর্ট"], "der Ball": ["বল", "বাল"], "das Motorrad": ["মোটরসাইকেল", "মোটোরাড"], "die Geige": ["বেহালা/ভায়োলিন", "গাইগে"], "Geige spielen": ["বেহালা বাজানো", "গাইগে শপিলেন"], "das Saxofon": ["স্যাক্সোফোন", "জাক্সোফোন"], "die Trompete": ["ট্রাম্পেট", "ট্রমপেটে"], "der Hund": ["কুকুর", "হুন্ট"], "süß (Euer Hund ist so süß.)": ["মিষ্টি/আদুরে (তোমাদের কুকুরটা খুব আদুরে।)", "জুস"], "die Idee": ["ধারণা/আইডিয়া", "ইডে"], "Gute Idee!": ["চমৎকার ধারণা!", "গুটে ইডে"], "liebe Grüße": ["আন্তরিক শুভেচ্ছা", "লিবে গ্রুসে"], "willkommen": ["স্বাগতম", "ভিলকমেন"], "cool": ["চমৎকার/কুল", "কুল"], "falsch": ["ভুল", "ফালশ"], "das Problem": ["সমস্যা", "প্রোবলেম"], "die Praxis, Praxen": ["ক্লিনিক/অনুশীলন", "প্রাক্সিস, প্রাক্সেন"], "schade": ["দুঃখজনক/আফসোস", "শাডে"], "Tut mir leid.": ["আমি দুঃখিত।", "টুট মির লাইট"], "Bitte entschuldigen Sie.": ["দয়া করে ক্ষমা করবেন।", "বিটে এন্টশুলডিগেন জি"], "Macht nichts.": ["কোনো ব্যাপার না।", "মাখট নিশটস"], "ins Fitness-Studio gehen": ["জিমে যাওয়া", "ইনস ফিটনেস-স্টুডিও গেহেন"], "klettern": ["পাহাড়ে ওঠা/ক্লাইম্বিং করা", "ক্লেটার্ন"], "Ski fahren": ["স্কি করা", "স্কি ফারেন"], "wandern": ["হাইকিং করা", "ভান্ডার্ন"], "der Ausflug": ["ভ্রমণ/এক্সকার্শন", "আউসফ্লুগ"], "einen Ausflug machen": ["ভ্রমণে যাওয়া", "আইনেন আউসফ্লুগ মাখেন"], "die Fahrradtour": ["সাইকেল ভ্রমণ", "ফারাডটুর"], "das Picknick": ["পিকনিক", "পিকনিক"], "das Fest": ["উৎসব", "ফেস্ট"], "feiern": ["উদযাপন করা", "ফাইয়ার্ন"], "der Geburtstag": ["জন্মদিন", "গেবুর্টসটাগ"], "werden, er wird (Sie wird 30 Jahre alt.)": ["হওয়া, সে হয় (তার বয়স ৩০ হবে।)", "ভেয়ারডেন, এয়ার ভিয়ার্ট"], "schenken": ["উপহার দেওয়া", "শেনকেন"], "das Geschenk": ["উপহার", "গেশেঙ্ক"], "ein|laden": ["আমন্ত্রণ জানানো", "আইন-লাডেন"], "das Datum (Sg.)": ["তারিখ", "ডাটুম"], "die Überraschung": ["বিস্ময়/সারপ্রাইজ", "উবাররাশুং"], "Achtung!": ["সাবধান!", "আখটুং"], "wissen, er weiß (Achtung, sie weiß nichts.)": ["জানা, সে জানে (সাবধান, সে কিছু জানে না।)", "ভিসেন, এয়ার ভাইস"], "mit|bringen": ["সাথে নিয়ে আসা", "মিট-ব্রিঙেন"], "Spaß haben": ["মজা করা", "শপাস হাবেন"], "hoffentlich (Hoffentlich kommt ihr.)": ["আশা করি (আশা করি তোমরা আসবে।)", "হোফেনটলিশ"], "die Mail": ["ইমেইল", "মেইল"], "schicken": ["পাঠানো", "শিকেন"], "der Betreff": ["বিষয়/সাবজেক্ট", "বেট্রেফ"], "die Anrede": ["সম্বোধন", "আনরেডে"], "herzliche Grüße": ["আন্তরিক শুভেচ্ছা", "হেয়ারৎসলিশে গ্রুসে"], "die Schorle": ["জুস ও পানির মিশ্রণ পানীয়", "শোরলে"], "das Eis (Sg.)": ["আইসক্রিম/বরফ", "আইস"], "die Salami": ["সালামি", "জালামি"], "das Schnitzel": ["শনিৎসেল/মাংসের পদ", "শনিৎসেল"], "die Tomatensuppe": ["টমেটো স্যুপ", "টোমাটেনজুপে"], "der Sandwich": ["স্যান্ডউইচ", "স্যান্ডউইচ"], "der Durst (Sg.)": ["তৃষ্ণা", "দুর্স্ট"], "der Hunger (Sg.)": ["ক্ষুধা", "হুঙার"], "die Speisekarte": ["মেনু", "শপাইজেকার্টে"], "die Bestellung": ["অর্ডার", "বেস্টেলুং"], "bestellen": ["অর্ডার করা", "বেস্টেলেন"], "bringen": ["আনা/নিয়ে আসা", "ব্রিঙেন"], "Für wen ist ...?": ["এটা কার জন্য...?", "ফুয়ার ভেন ইস্ট...?"], "bezahlen": ["টাকা দেওয়া/পরিশোধ করা", "বেৎসালেন"], "zahlen (Zahlen, bitte.)": ["টাকা দেওয়া (বিল দিন, প্লিজ।)", "ৎসালেন"], "die Rechnung": ["বিল/হিসাব", "রেশনুং"], "Zusammen oder getrennt?": ["একসাথে নাকি আলাদা?", "ৎসুজামেন ওডার গেট্রেনট?"], "das Trinkgeld (Sg.)": ["বকশিশ/টিপ", "ট্রিঙ্কগেল্ট"], "geben, er gibt": ["দেওয়া, সে দেয়", "গেবেন, এয়ার গিপ্ট"], "Stimmt so.": ["ঠিক আছে, বাকিটা রাখুন।", "শটিমট জো"], "die Gabel": ["কাঁটাচামচ", "গাবেল"], "das Messer": ["ছুরি", "মেসার"], "der Löffel": ["চামচ", "লোফেল"], "das Glas": ["গ্লাস", "গ্লাস"], "die Tasse": ["কাপ", "তাসে"], "der Teller": ["প্লেট", "টেলার"], "die Serviette": ["ন্যাপকিন", "জেয়ারভিয়েটে"], "die Kneipe": ["পানশালা/পাব", "কনাইপে"], "das Kaffeehaus": ["কফি হাউস", "কাফেহাউস"], "das Lokal": ["রেস্তোরাঁ/স্থান", "লোকাল"], "der Biergarten": ["বিয়ার গার্ডেন", "বিয়ারগার্টেন"], "die Bank": ["ব্যাংক", "বাঙ্ক"], "die Selbstbedienung (Sg.)": ["সেলফ সার্ভিস", "জেলবস্টবেডিনুং"], "geöffnet": ["খোলা", "গেওফনেট"], "draußen (Man kann draußen sitzen.)": ["বাইরে (বাইরে বসা যায়।)", "ড্রাউসেন"], "das Programm": ["প্রোগ্রাম", "প্রোগ্রাম"], "los sein (Was ist los?)": ["চলছে (কী হচ্ছে?)", "লোস জাইন"], "(keine) Lust haben": ["ইচ্ছা (না) থাকা", "(কাইনে) লুস্ট হাবেন"], "mit|kommen": ["সাথে আসা", "মিট-কমেন"], "der Treffpunkt": ["সাক্ষাতের স্থান", "ট্রেফপুঙ্কট"], "der Eintritt": ["প্রবেশ/প্রবেশমূল্য", "আইনট্রিট"], "die Anmeldung": ["নিবন্ধন", "আনমেলডুং"], "beginnen": ["শুরু করা", "বেগিনেন"], "enden": ["শেষ হওয়া", "এনডেন"], "die Karte": ["কার্ড/মানচিত্র/টিকেট", "কার্টে"], "ab|holen": ["নিতে আসা/পিক করা", "আপ-হোলেন"], "an|fangen, er fängt an": ["শুরু করা, সে শুরু করে", "আন-ফাঙেন, এয়ার ফেংট আন"], "an|rufen": ["ফোন করা", "আন-রুফেন"], "auf|hören": ["থামা/বন্ধ করা", "আউফ-হোয়রেন"], "mit|machen": ["অংশগ্রহণ করা", "মিট-মাখেন"], "glauben": ["বিশ্বাস করা/মনে করা", "গ্লাউবেন"], "laufen, er läuft": ["দৌড়ানো, সে দৌড়ায়", "লাউফেন, এয়ার লয়ফট"], "genießen": ["উপভোগ করা", "গেনিসেন"], "passieren": ["ঘটা", "পাসিরেন"], "zu Hause": ["বাসায়", "ৎসু হাউজে"], "kalt": ["ঠান্ডা", "কালট"], "warm": ["গরম", "ভার্ম"], "wieder": ["আবার", "ভিডার"], "typisch": ["সাধারণ/টিপিক্যাল", "টুপিশ"], "verboten": ["নিষিদ্ধ", "ফেয়ারবোটেন"], "überall": ["সর্বত্র", "উবারাল"], "besonders (Was ist besonders?)": ["বিশেষভাবে (বিশেষ কী?)", "বেজনডার্স"], "der Spielplatz": ["খেলার মাঠ", "শপিলপ্লাৎস"], "früh": ["তাড়াতাড়ি/সকাল সকাল", "ফ্রু"], "Warum nicht?": ["কেন না?", "ভারুম নিশট?"], "Alles klar?": ["সব ঠিক আছে?", "আলেস ক্লার?"], "Wann denn?": ["তাহলে কখন?", "ভান ডেন?"], "Klingt gut.": ["শুনতে ভালো লাগছে।", "ক্লিংট গুট"], "der Arbeitsalltag (Sg.)": ["কাজের দৈনন্দিন জীবন", "আরবাইটসআলটাগ"], "der Bäcker": ["রুটিওয়ালা/বেকার", "বেকার"], "die Zahnarzt": ["দন্ত চিকিৎসক", "ৎসানআর্ৎসট"], "der Hausmeister": ["বাড়ি রক্ষণাবেক্ষণকারী", "হাউসমাইস্টার"], "der Mitarbeiter": ["কর্মচারী (পুরুষ)", "মিটআরবাইটার"], "die Mitarbeiterin": ["কর্মচারী (মহিলা)", "মিটআরবাইটারিন"], "das Praktikum, Praktika": ["ইন্টার্নশিপ, ইন্টার্নশিপসমূহ", "প্রাকটিকুম, প্রাকটিকা"], "der Bericht": ["প্রতিবেদন", "বেরিশট"], "die Präsentation": ["উপস্থাপনা", "প্রেজেন্টাৎসিওন"], "erklären": ["ব্যাখ্যা করা", "এয়ারক্লেয়ারেন"], "der Fehler": ["ভুল", "ফেলার"], "korrigieren": ["সংশোধন করা", "কোরিগিরেন"], "interessieren": ["আগ্রহী করা", "ইন্টারেসিরেন"], "diskutieren": ["আলোচনা করা", "ডিসকুটিরেন"], "die Pause": ["বিরতি", "পাউজে"], "der Urlaub": ["ছুটি", "উয়ারলাউপ"], "die Medien (Pl.)": ["গণমাধ্যম", "মেডিয়েন"], "hoch|fahren, er fährt hoch": ["চালু করা (কম্পিউটার), সে চালু করে", "হোখ-ফারেন"], "an|machen": ["চালু করা", "আন-মাখেন"], "aus|machen": ["বন্ধ করা", "আউস-মাখেন"], "die Datei": ["ফাইল", "ডাটাই"], "öffnen (eine Datei öffnen)": ["খোলা (একটি ফাইল খোলা)", "ওফনেন"], "speichern": ["সংরক্ষণ করা", "শপাইশার্ন"], "drucken": ["প্রিন্ট করা", "ড্রুকেন"], "der Drucker": ["প্রিন্টার", "ড্রুকার"], "das Passwort": ["পাসওয়ার্ড", "পাসভর্ট"], "ein|geben, er gibt ein": ["প্রবেশ করানো, সে প্রবেশ করায়", "আইন-গেবেন"], "der Blog": ["ব্লগ", "ব্লগ"], "der Akku": ["ব্যাটারি", "আকু"], "leer (Mein Akku ist gleich leer.)": ["খালি (আমার ব্যাটারি প্রায় শেষ।)", "লেয়ার"], "das WLAN (Sg.)": ["ওয়াইফাই", "ভে-লান"], "das Netz (Ich habe kein Netz.)": ["নেটওয়ার্ক (আমার নেটওয়ার্ক নেই।)", "নেৎস"], "offline": ["অফলাইন", "অফলাইন"], "der Automat": ["এটিএম/মেশিন", "আউটোমাট"], "holen (Ich muss noch Geld holen.)": ["আনা (আমাকে আরও টাকা তুলতে হবে।)", "হোলেন"], "das Konto, Konten": ["ব্যাংক হিসাব, হিসাবসমূহ", "কন্টো, কন্টেন"], "überweisen": ["ট্রান্সফার করা", "উবারভাইজেন"], "die Kontonummer": ["অ্যাকাউন্ট নম্বর", "কন্টোনুমার"], "die Kreditkarte": ["ক্রেডিট কার্ড", "ক্রেডিটকার্টে"], "bar (Zahlen Sie bar oder mit Karte?)": ["নগদ (আপনি নগদ দেবেন নাকি কার্ডে?)", "বার"], "der Brief": ["চিঠি", "ব্রিফ"], "die Post (Sg.)": ["ডাক", "পোস্ট"], "der Absender": ["প্রেরক", "আবজেন্ডার"], "der Empfänger": ["প্রাপক", "এমপফেঙার"], "an (Ich schreibe einen Brief an Frau Müller.)": ["কাছে (আমি মিসেস মুলারকে চিঠি লিখছি।)", "আন"], "Sehr geehrte Damen und Herren, ...": ["মাননীয় মহোদয়গণ...", "জেয়ার গেএয়ারটে ডামেন উন্ড হেয়ারেন"], "Mit freundlichen Grüßen": ["আন্তরিক শুভেচ্ছাসহ", "মিট ফ্রয়েনডলিশেন গ্রুসেন"], "die Unterschrift": ["স্বাক্ষর", "উন্টারশরিফট"], "das Mitglied": ["সদস্য", "মিটগ্লিড"], "kennen|lernen": ["পরিচিত হওয়া", "কেনেন-লেয়ারনেন"], "der Kontakt": ["যোগাযোগ", "কন্টাকট"], "das Lied": ["গান", "লিড"], "die Musikgruppe": ["সংগীত দল/ব্যান্ড", "মুজিকগ্রুপে"], "die Spezialität": ["বিশেষত্ব", "শপেৎসিয়ালিটেট"], "der Small Talk": ["সাধারণ আলাপ", "স্মল টক"], "reden": ["কথা বলা", "রেডেন"], "das Leben": ["জীবন", "লেবেন"], "aktuell": ["বর্তমান/সাম্প্রতিক", "আকটুয়েল"], "neutral": ["নিরপেক্ষ", "নয়ট্রাল"], "der Aufzug": ["লিফট", "আউফৎসুগ"], "die Politik (Sg.)": ["রাজনীতি", "পোলিটিক"], "die Serie": ["সিরিজ", "জেরিয়ে"], "die Religion": ["ধর্ম", "রেলিগিওন"], "die meisten (Das mögen die meisten Leute nicht.)": ["অধিকাংশ (বেশিরভাগ মানুষ এটা পছন্দ করে না।)", "মাইসটেন"], "langweilig": ["একঘেয়ে/বিরক্তিকর", "লাংভাইলিশ"], "heiß": ["গরম", "হাইস"], "schrecklich": ["ভয়ংকর", "শ্রেকলিশ"], "oder (Das ist schrecklich, oder?)": ["নাকি (এটা ভয়ংকর, তাই না?)", "ওডার"], "Alles klar.": ["সব ঠিক আছে।", "আলেস ক্লার"], "So ein Zufall!": ["কী একটা কাকতালীয় ব্যাপার!", "জো আইন ৎসুফাল"], "Bis dann!": ["তাহলে পরে দেখা হবে!", "বিস ডান"], "doch (Kommst du heute nicht? – Doch.)": ["হ্যাঁ অবশ্যই (তুমি আজ আসবে না? - হ্যাঁ আসবো।)", "ডখ"], "der/die Erwachsene": ["প্রাপ্তবয়স্ক", "এয়ারভাখসেনে"], "nach Hause": ["বাড়ির দিকে", "নাখ হাউজে"], "der Nachbar": ["প্রতিবেশী (পুরুষ)", "নাখবার"], "die Nachbarin": ["প্রতিবেশী (মহিলা)", "নাখবারিন"], "das Paket": ["পার্সেল/প্যাকেট", "পাকেট"], "an|nehmen, er nimmt an": ["গ্রহণ করা, সে গ্রহণ করে", "আন-নেমেন"], "das Sprachinstitut": ["ভাষা ইনস্টিটিউট", "শপ্রাখইনস্টিটুট"], "bedeuten (Was bedeutet das?)": ["অর্থ হওয়া (এর অর্থ কী?)", "বেডয়টেন"], "dauern": ["সময় নেওয়া/স্থায়ী হওয়া", "ডাউয়ার্ন"], "bleiben": ["থাকা", "ব্লাইবেন"], "denken": ["চিন্তা করা", "ডেঙ্কেন"], "mit|nehmen, er nimmt mit": ["সাথে নেওয়া, সে সাথে নেয়", "মিট-নেমেন"], "verwenden": ["ব্যবহার করা", "ফেয়ারভেন্ডেন"], "anders": ["আলাদা/ভিন্নভাবে", "আন্ডার্স"], "beliebt": ["জনপ্রিয়", "বেলিপট"], "leicht": ["সহজ", "লাইশট"], "schwer": ["কঠিন/ভারী", "শোয়ার"], "gar (Das ist gar nicht schwer.)": ["মোটেও (এটা মোটেও কঠিন না।)", "গার"], "eigentlich": ["আসলে", "আইগেনটলিশ"], "endlich": ["অবশেষে", "এন্টলিশ"], "gestern": ["গতকাল", "গেস্টার্ন"], "später": ["পরে", "শপেটার"], "wohin (Wohin gehst du?)": ["কোথায় (তুমি কোথায় যাচ্ছো?)", "ভোহিন"], "zu (Meine Chefin nimmt mich zu Kunden mit.)": ["সাথে/কাছে (আমার বস আমাকে ক্লায়েন্টদের কাছে নিয়ে যান।)", "ৎসু"], "fit": ["সুস্থ/ফিট", "ফিট"], "sportlich": ["ক্রীড়াপ্রিয়", "শপোর্টলিশ"], "die Sportlerin": ["ক্রীড়াবিদ (মহিলা)", "শপোর্টলেরিন"], "gesund leben": ["স্বাস্থ্যকর জীবনযাপন করা", "গেজুন্ট লেবেন"], "an|ziehen (die Sportschuhe anziehen)": ["পরা (খেলার জুতা পরা)", "আন-ৎসিয়েন"], "weiter|machen": ["চালিয়ে যাওয়া", "ভাইটার-মাখেন"], "schaffen": ["সম্পন্ন করতে পারা", "শাফেন"], "egal (Egal, ich schaffe das.)": ["যাইহোক না কেন (যাই হোক, আমি এটা করতে পারবো।)", "এগাল"], "regelmäßig (regelmäßig Sport machen)": ["নিয়মিত (নিয়মিত খেলাধুলা করা)", "রেগেলমেসিশ"], "täglich": ["প্রতিদিন", "টেগলিশ"], "faul": ["অলস", "ফাউল"], "aktiv": ["সক্রিয়", "আকটিভ"], "gefährlich": ["বিপজ্জনক", "গেফেয়ারলিশ"], "müde": ["ক্লান্ত", "মুডে"], "hungrig": ["ক্ষুধার্ত", "হুংরিশ"], "richtig (Ich bin richtig hungrig.)": ["সত্যিই (আমি সত্যিই ক্ষুধার্ত।)", "রিশটিশ"], "vergessen, er vergisst": ["ভুলে যাওয়া, সে ভুলে যায়", "ফেয়ারগেসেন, এয়ার ফেয়ারগিস্ট"], "vermissen": ["মিস করা", "ফেয়ারমিসেন"], "die Süßigkeit": ["মিষ্টি খাবার", "জুসিশকাইট"], "mindestens": ["কমপক্ষে", "মিন্ডেস্টেনস"], "das Alter (Sg.)": ["বয়স", "আলটার"], "die Größe": ["উচ্চতা", "গ্রোসে"], "das Gewicht (Sg.)": ["ওজন", "গেভিশট"], "wiegen": ["ওজন করা", "ভিগেন"], "schwer (Wie schwer ist er?)": ["ভারী (তার ওজন কত?)", "শোয়ার"], "der Körper": ["শরীর", "কোয়ারপার"], "der Kopf": ["মাথা", "কপফ"], "der Hals": ["গলা", "হালস"], "der Bauch": ["পেট", "বাউখ"], "der Rücken": ["পিঠ", "রুকেন"], "der Arm": ["হাত (বাহু)", "আরম"], "die Hand": ["হাত", "হান্ট"], "der Finger": ["আঙুল", "ফিঙার"], "das Bein": ["পা", "বাইন"], "das Knie": ["হাঁটু", "কনি"], "der Fuß": ["পায়ের পাতা", "ফুস"], "das Gesicht": ["মুখমণ্ডল", "গেজিশট"], "der Mund": ["মুখ", "মুন্ট"], "der Zahn": ["দাঁত", "ৎসান"], "das Auge": ["চোখ", "আউগে"], "das Ohr": ["কান", "ওর"], "die Nase": ["নাক", "নাজে"], "riechen": ["গন্ধ পাওয়া", "রিশেন"], "das Haar": ["চুল", "হার"], "der Unfall": ["দুর্ঘটনা", "উনফাল"], "der/die Verletzte": ["আহত ব্যক্তি", "ফেয়ারলেৎসটে"], "verletzt": ["আহত", "ফেয়ারলেৎস্ট"], "weh|tun, es tut weh": ["ব্যথা দেওয়া, এটা ব্যথা দেয়", "ভে-টুন"], "der Schmerz": ["ব্যথা", "শমেয়ার্ৎস"], "die Wunde": ["ক্ষত", "ভুনডে"], "sauber machen": ["পরিষ্কার করা", "জাউবার মাখেন"], "der Verband": ["ব্যান্ডেজ", "ফেয়ারবান্ট"], "das Pflaster": ["ব্যান্ডএইড", "ফলাস্টার"], "die Salbe": ["মলম", "জালবে"], "das Rezept": ["প্রেসক্রিপশন", "রেৎসেপ্ট"], "bekommen (Frau Pohn bekommt ein Rezept.)": ["পাওয়া (মিসেস পন একটা প্রেসক্রিপশন পান।)", "বেকমেন"], "die Apotheke": ["ফার্মেসি", "আপোটেকে"], "bewegen (Bewegen Sie das Bein nur wenig.)": ["নাড়ানো (পা শুধু সামান্য নাড়ান।)", "বেভেগেন"], "sollen, er soll (Ich soll den Verband wechseln.)": ["উচিত, তার উচিত (আমার ব্যান্ডেজ পাল্টানো উচিত।)", "জোলেন, এয়ার জোল"], "Gute Besserung!": ["দ্রুত সুস্থ হও!", "গুটে বেসেরুং"], "der Doktor": ["ডাক্তার", "ডকটর"], "die Krankheit": ["রোগ", "ক্রাঙ্কহাইট"], "der Schnupfen": ["সর্দি", "শনুপফেন"], "das Fieber (Sg.)": ["জ্বর", "ফিবার"], "husten": ["কাশি দেওয়া", "হুসটেন"], "erkältet sein": ["ঠান্ডা লাগা", "এয়ারকেলটেট জাইন"], "total (Ich bin total erkältet.)": ["সম্পূর্ণ (আমার পুরোপুরি ঠান্ডা লেগেছে।)", "টোটাল"], "schlecht (Mir ist schlecht.)": ["খারাপ (আমার শরীর খারাপ লাগছে।)", "শলেশট"], "die ...schmerzen (Pl.)": ["...ব্যথা (বহুবচন)", "শমেয়ার্ৎসেন"], "dürfen, er darf (Ich darf nicht baden.)": ["অনুমতি থাকা, তার অনুমতি আছে (আমি গোসল করতে পারবো না।)", "ডুরফেন, এয়ার ডারফ"], "erlaubt": ["অনুমোদিত", "এয়ারলাউপট"], "rauchen (Rauchen Sie nicht!)": ["ধূমপান করা (ধূমপান করবেন না!)", "রাউখেন"], "ein Medikament nehmen": ["ওষুধ খাওয়া", "আইন মেডিকামেন্ট নেমেন"], "die Tablette": ["ট্যাবলেট", "তাবলেটে"], "gegen (Er nimmt einen Saft gegen den Husten.)": ["এর বিরুদ্ধে (সে কাশির জন্য সিরাপ খায়।)", "গেগেন"], "der Tropfen": ["ড্রপ", "ট্রপফেন"], "die Spritze": ["ইনজেকশন", "শপ্রিৎসে"], "das Hausmittel": ["ঘরোয়া চিকিৎসা", "হাউসমিটেল"], "die Kontrolle": ["নিয়ন্ত্রণ/চেকআপ", "কনট্রোলে"], "Danke für Ihre Hilfe!": ["আপনার সাহায্যের জন্য ধন্যবাদ!", "ডাঙ্কে ফুয়ার ইরে হিলফে"], "wiederholen": ["পুনরাবৃত্তি করা", "ভিডারহোলেন"], "auf|schreiben": ["লিখে রাখা", "আউফ-শ্রাইবেন"], "vor|lesen, er liest vor": ["পড়ে শোনানো, সে পড়ে শোনায়", "ফোর-লেজেন"], "auf|machen": ["খোলা", "আউফ-মাখেন"], "die Tafel": ["বোর্ড", "তাফেল"], "das Fenster (Mach bitte das Fenster auf.)": ["জানালা (প্লিজ জানালা খোলো।)", "ফেনস্টার"], "leise": ["আস্তে/নিচু স্বরে", "লাইজে"], "ruhig": ["শান্ত", "রুইশ"], "das Ergebnis": ["ফলাফল", "এয়ারগেবনিস"], "anstrengend (Die Arbeit ist anstrengend.)": ["পরিশ্রমসাধ্য (কাজটা পরিশ্রমসাধ্য।)", "আনস্ট্রেঙেন্ট"], "die Freizeit (Sg.)": ["অবসর সময়", "ফ্রাইৎসাইট"], "das Experiment": ["পরীক্ষা/এক্সপেরিমেন্ট", "এক্সপেরিমেন্ট"], "der Tipp": ["পরামর্শ", "টিপ"], "jemand (Hat jemand einen Tipp für mich?)": ["কেউ (কারও কাছে কোনো পরামর্শ আছে?)", "ইয়েমান্ট"], "ein|schlafen, er schläft ein": ["ঘুমিয়ে পড়া, সে ঘুমিয়ে পড়ে", "আইন-শলাফেন"], "versuchen": ["চেষ্টা করা", "ফেয়ারজুখেন"], "baden": ["গোসল করা/স্নান করা", "বাডেন"], "glücklich": ["খুশি", "গ্লুকলিশ"], "perfekt (Für mich ist das perfekt.)": ["নিখুঁত (আমার জন্য এটা নিখুঁত।)", "পেয়ারফেক্ট"], "sofort": ["সঙ্গে সঙ্গে", "জোফোর্ট"], "Hurra!": ["হুররে!", "হুরা"], "sicher (Ich bin sicher die Erste.)": ["নিশ্চিত (আমি নিশ্চিত প্রথম হবো।)", "জিশার"], "die App": ["অ্যাপ", "আপ"], "die Wohnung": ["অ্যাপার্টমেন্ট/ফ্ল্যাট", "ভোনুং"], "das Hochhaus": ["বহুতল ভবন", "হোখহাউস"], "die WG (die Wohngemeinschaft)": ["শেয়ার্ড ফ্ল্যাট", "ভে-গে (ভোনগেমাইনশাফট)"], "das Apartment": ["অ্যাপার্টমেন্ট", "আপার্টমেন্ট"], "das Reihenhaus": ["সারিবদ্ধ বাড়ি", "রাইহেনহাউস"], "der Raum": ["কক্ষ/স্থান", "রাউম"], "das Bad": ["বাথরুম", "বাড"], "die Dusche": ["শাওয়ার", "দুশে"], "der Flur": ["করিডোর", "ফ্লুর"], "die Küche": ["রান্নাঘর", "কুখে"], "das Schlafzimmer": ["শোবার ঘর", "শলাফৎসিমার"], "das Wohnzimmer": ["বসার ঘর", "ভোনৎসিমার"], "das Kinderzimmer": ["শিশুদের ঘর", "কিন্ডারৎসিমার"], "der Balkon": ["বারান্দা", "বালকন"], "die Terasse": ["টেরেস", "টেরাসে"], "der Garten": ["বাগান", "গার্টেন"], "die Treppe": ["সিঁড়ি", "ট্রেপে"], "die Tür": ["দরজা", "টুয়ার"], "die Decke": ["ছাদ/কম্বল", "ডেকে"], "das Erdgeschoss": ["নিচতলা/গ্রাউন্ড ফ্লোর", "এয়ার্ডগেশস"], "der Stock (im zweiten Stock)": ["তলা (দ্বিতীয় তলায়)", "শটক"], "die Lage (Sg.) (Die Lage ist zentral.)": ["অবস্থান (অবস্থানটি কেন্দ্রীয়।)", "লাগে"], "die Nähe (Sg.)": ["নিকটতা/কাছাকাছি", "নেয়ে"], "das Zentrum, Zentren": ["কেন্দ্র, কেন্দ্রসমূহ", "ৎসেনট্রুম, ৎসেনট্রেন"], "zentral": ["কেন্দ্রীয়", "ৎসেনট্রাল"], "direkt (Die Wohnung ist direkt am Bahnhof.)": ["সরাসরি (ফ্ল্যাটটি স্টেশনের ঠিক পাশে।)", "ডিরেক্ট"], "weit (Es ist nicht weit zur Uni.)": ["দূরে (বিশ্ববিদ্যালয় খুব দূরে না।)", "ভাইট"], "billig": ["সস্তা", "বিলিশ"], "günstig": ["সাশ্রয়ী", "গুনস্টিশ"], "dunkel": ["অন্ধকার", "ডুঙ্কেল"], "hell": ["উজ্জ্বল/আলোকিত", "হেল"], "gemütlich": ["আরামদায়ক", "গেমুটলিশ"], "elegant": ["মার্জিত/এলিগ্যান্ট", "এলেগান্ট"], "der Blick (Der Blick aus dem Fenster ist toll.)": ["দৃশ্য (জানালা থেকে দৃশ্যটি দারুণ।)", "ব্লিক"], "aus|sehen, er sieht aus (Die Wohnung sieht schön aus.)": ["দেখতে লাগা, এটা দেখায় (ফ্ল্যাটটি সুন্দর দেখায়।)", "আউস-জেহেন"], "die Möbel (Pl.)": ["আসবাবপত্র", "মোবেল"], "das Gerät": ["যন্ত্র/ডিভাইস", "গেরেট"], "die Lampe": ["বাতি/ল্যাম্প", "লামপে"], "das Licht": ["আলো", "লিশট"], "die Pflanze": ["গাছ/উদ্ভিদ", "ফলানৎসে"], "das Regal": ["তাক/শেলফ", "রেগাল"], "der Schrank": ["আলমারি", "শ্রাঙ্ক"], "der Schreibtisch": ["লেখার টেবিল", "শ্রাইবটিশ"], "der Sessel": ["আরামকেদারা", "জেসেল"], "das Sofa": ["সোফা", "জোফা"], "der Stuhl": ["চেয়ার", "শতুল"], "der Tisch": ["টেবিল", "টিশ"], "der Teppich": ["কার্পেট", "টেপিশ"], "das Bett": ["বিছানা", "বেট"], "der Fernseher": ["টেলিভিশন", "ফেয়ারনজেহার"], "der Herd": ["চুলা", "হেয়ার্ট"], "die Kaffeemaschine": ["কফি মেশিন", "কাফেমাশিনে"], "der Kühlschrank": ["ফ্রিজ", "কুলশ্রাঙ্ক"], "die Spülmaschine": ["ডিশওয়াশার", "শপুলমাশিনে"], "die Waschmaschine": ["ওয়াশিং মেশিন", "ভাশমাশিনে"], "die Anzeige": ["বিজ্ঞাপন", "আনৎসাইগে"], "besichtigen": ["পরিদর্শন করা", "বেজিশটিগেন"], "unterschreiben (den Vertrag unterschreiben)": ["স্বাক্ষর করা (চুক্তিতে স্বাক্ষর করা)", "উন্টারশ্রাইবেন"], "der Vertrag": ["চুক্তি", "ফেয়ারট্রাগ"], "vermieten": ["ভাড়া দেওয়া", "ফেয়ারমিটেন"], "mieten": ["ভাড়া নেওয়া", "মিটেন"], "die Miete": ["ভাড়া", "মিটে"], "der Vermieter": ["বাড়িওয়ালা", "ফেয়ারমিটার"], "packen": ["গোছানো/প্যাক করা", "পাকেন"], "ziehen (in eine Wohnung ziehen)": ["চলে যাওয়া (একটা ফ্ল্যাটে উঠা)", "ৎসিয়েন"], "um|ziehen": ["বাসা বদলানো", "উম-ৎসিয়েন"], "der Umzug": ["বাসা বদল", "উমৎসুগ"], "stellen (Ich stelle den Schrank ins Bad.)": ["রাখা (আমি আলমারিটা বাথরুমে রাখি।)", "শটেলেন"], "die Feier": ["উদযাপন/পার্টি", "ফাইয়ার"], "hinter": ["পেছনে", "হিন্টার"], "neben": ["পাশে", "নেবেন"], "über": ["উপরে", "উবার"], "unter": ["নিচে", "উন্টার"], "zwischen": ["মাঝে", "ৎসভিশেন"], "blau": ["নীল", "ব্লাউ"], "braun": ["বাদামি", "ব্রাউন"], "gelb": ["হলুদ", "গেল্ব"], "grau": ["ধূসর", "গ্রাউ"], "grün": ["সবুজ", "গ্রুন"], "lila": ["বেগুনি", "লিলা"], "orange": ["কমলা", "অরাঞ্জে"], "rot": ["লাল", "রোট"], "schwarz": ["কালো", "শোয়ার্ৎস"], "weiß": ["সাদা", "ভাইস"], "schließen (Bitte schließ die Tür.)": ["বন্ধ করা (দরজাটা বন্ধ করো প্লিজ।)", "শলিসেন"], "bald": ["শীঘ্রই", "বাল্ড"], "nie": ["কখনো না", "নি"], "ein paar (ein paar Jahre)": ["কয়েক (কয়েক বছর)", "আইন পার"], "genau": ["ঠিক/সঠিক", "গেনাউ"], "hässlich": ["কুৎসিত", "হেসলিশ"], "jung": ["তরুণ", "ইউঙ"], "zufrieden": ["সন্তুষ্ট", "ৎসুফ্রিডেন"], "besonders": ["বিশেষভাবে", "বেজনডার্স"], "positiv": ["ইতিবাচক", "পোজিটিভ"], "negativ": ["নেতিবাচক", "নেগাটিভ"], "oben": ["উপরে", "ওবেন"], "die Blume": ["ফুল", "ব্লুমে"], "der Baum": ["গাছ", "বাউম"], "das Holz (Die Treppen sind aus Holz.)": ["কাঠ (সিঁড়িগুলো কাঠের তৈরি।)", "হোল্ৎস"], "das Heft": ["খাতা", "হেফট"], "der Wunsch": ["ইচ্ছা/কামনা", "ভুনশ"], "der Glückwunsch": ["শুভকামনা", "গ্লুকভুনশ"], "nicht mehr": ["আর না", "নিশট মেয়ার"], "zurzeit": ["এই মুহূর্তে/বর্তমানে", "ৎসুরৎসাইট"]};
+
+let learnedSet = new Set(JSON.parse(localStorage.getItem('learned_v3') || '[]'));
+let currentChapter = 'all';
+let currentCategory = 'all';
+let currentFilter = 'all';
+let searchQuery = '';
+let quizWords = [], quizIdx = 0, quizScore = 0;
+
+function saveProgress() {
+  localStorage.setItem('learned_v3', JSON.stringify([...learnedSet]));
+  updateStats();
+}
+
+function updateStats() {
+  const total = 935;
+  const learned = learnedSet.size;
+  document.getElementById('sLearned').textContent = learned;
+  document.getElementById('sRemain').textContent = total - learned;
+  document.getElementById('sPct').textContent = Math.round(learned/total*100) + '%';
+}
+
+function cleanForTTS(word) {
+  return word.replace(/^(der|die|das)\s+/,'').replace(/\(.*?\)/g,'').trim();
+}
+
+function getArticleClass(word) {
+  if (/^der\s/.test(word)) return 'der';
+  if (/^die\s/.test(word)) return 'die';
+  if (/^das\s/.test(word)) return 'das';
+  return null;
+}
+
+function speakWord(word) {
+  const clean = cleanForTTS(word);
+  const utt = new SpeechSynthesisUtterance(clean);
+  utt.lang = 'de-DE';
+  utt.rate = 0.85;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utt);
+}
+
+function speakRandom() {
+  const allWords = [];
+  Object.values(VOCAB).forEach(ch => Object.values(ch).forEach(words => allWords.push(...words)));
+  const w = allWords[Math.floor(Math.random()*allWords.length)];
+  speakWord(w);
+}
+
+function buildChapterSelect() {
+  const sel = document.getElementById('chapterSelect');
+  Object.keys(VOCAB).forEach(ch => {
+    const opt = document.createElement('option');
+    opt.value = ch;
+    opt.textContent = ch;
+    sel.appendChild(opt);
+  });
+}
+
+function buildCategorySelect() {
+  const sel = document.getElementById('categorySelect');
+  sel.innerHTML = '<option value="all">All categories</option>';
+  const chapters = currentChapter === 'all' ? Object.keys(VOCAB) : [currentChapter];
+  const seen = new Set();
+  chapters.forEach(ch => {
+    Object.keys(VOCAB[ch]).forEach(cat => {
+      if (!seen.has(cat)) {
+        seen.add(cat);
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        sel.appendChild(opt);
+      }
+    });
+  });
+}
+
+function onChapterChange() {
+  currentChapter = document.getElementById('chapterSelect').value;
+  currentCategory = 'all';
+  buildCategorySelect();
+  render();
+}
+
+function onCategoryChange() {
+  currentCategory = document.getElementById('categorySelect').value;
+  render();
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  const id = 'btn' + f.charAt(0).toUpperCase() + f.slice(1);
+  const btn = document.getElementById(id);
+  if (btn) btn.classList.add('active');
+  render();
+}
+
+function toggleLearned(wordKey) {
+  if (learnedSet.has(wordKey)) {
+    learnedSet.delete(wordKey);
+  } else {
+    learnedSet.add(wordKey);
+  }
+  saveProgress();
+  render();
+}
+
+function render() {
+  const content = document.getElementById('mainContent');
+  const q = searchQuery.toLowerCase();
+  let html = '';
+  let totalShown = 0;
+
+  const chaptersToShow = currentChapter === 'all' ? Object.keys(VOCAB) : [currentChapter];
+
+  chaptersToShow.forEach(ch => {
+    const cats = VOCAB[ch];
+    let chapHtml = '';
+    Object.entries(cats).forEach(([cat, words]) => {
+      if (currentCategory !== 'all' && currentCategory !== cat) return;
+
+      const filtered = words.filter(w => {
+        const bn = BANGLA[w] || ['',''];
+        const matchSearch = !q || w.toLowerCase().includes(q) || bn[0].toLowerCase().includes(q) || bn[1].toLowerCase().includes(q);
+        const isLearned = learnedSet.has(w);
+        const matchFilter = currentFilter === 'all' || (currentFilter === 'learned' && isLearned) || (currentFilter === 'unlearned' && !isLearned);
+        return matchSearch && matchFilter;
+      });
+      if (!filtered.length) return;
+      totalShown += filtered.length;
+
+      const cardsHtml = filtered.map(w => {
+        const isLearned = learnedSet.has(w);
+        const articleCls = getArticleClass(w);
+        const bn = BANGLA[w] || ['',''];
+        const meaning = bn[0] || '';
+        const pronun = bn[1] || '';
+        const articleBadge = articleCls ? '<span class="article-badge">' + articleCls + '</span>' : '';
+        const safeW = w.replace(/'/g, "\\'");
+
+        return '<div class="word-card ' + (isLearned?'learned':'') + '">' +
+          '<div class="badge">✓ শেখা</div>' +
+          '<div class="german-word">' + articleBadge + w + '</div>' +
+          (meaning ? '<div class="bangla-row"><span class="bangla-meaning">' + meaning + '</span><span class="bangla-pronun">(' + pronun + ')</span></div>' : '') +
+          '<div class="card-actions">' +
+          '<button class="btn-audio" onclick="speakWord(\'' + safeW + '\')">🔊 শুনো</button>' +
+          '<button class="btn-learned" onclick="toggleLearned(\'' + safeW + '\')">' + (isLearned ? '✓ শেখা' : '+ শিখেছি') + '</button>' +
+          '</div></div>';
+      }).join('');
+
+      chapHtml += '<div class="category-block">' +
+        '<div class="category-title">' + cat + '<span class="category-count">' + filtered.length + ' টি</span></div>' +
+        '<div class="word-grid">' + cardsHtml + '</div></div>';
+    });
+
+    if (chapHtml) {
+      if (currentChapter === 'all') {
+        html += '<h2 style="color:#000;font-size:1rem;margin:16px 0 8px;padding-bottom:6px;border-bottom:2px solid #000;">' + ch + '</h2>';
+      }
+      html += chapHtml;
+    }
+  });
+
+  if (!totalShown) {
+    html = '<div class="empty">কোনো শব্দ পাওয়া যায়নি।<br><small>অন্য কিছু খুঁজুন।</small></div>';
+  }
+
+  content.innerHTML = html;
+}
+
+function startQuiz() {
+  const allWords = [];
+  Object.entries(VOCAB).forEach(([ch, cats]) =>
+    Object.values(cats).forEach(words => allWords.push(...words.filter(w => BANGLA[w])))
+  );
+  for (let i = allWords.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [allWords[i],allWords[j]] = [allWords[j],allWords[i]];
+  }
+  quizWords = allWords.slice(0, 10);
+  quizIdx = 0; quizScore = 0;
+  document.getElementById('quizOverlay').classList.add('open');
+  showQuizQuestion();
+}
+
+function showQuizQuestion() {
+  if (quizIdx >= quizWords.length) {
+    showQuizResult(); return;
+  }
+  const word = quizWords[quizIdx];
+  const correctMeaning = (BANGLA[word] || ['',''])[0];
+
+  const allMeanings = Object.values(BANGLA).map(v => v[0]).filter(m => m && m !== correctMeaning);
+  const shuffled = allMeanings.sort(() => Math.random()-0.5).slice(0,3);
+  const options = [correctMeaning, ...shuffled].sort(() => Math.random()-0.5);
+
+  document.getElementById('qProgress').textContent = 'প্রশ্ন ' + (quizIdx+1) + '/' + quizWords.length + ' | স্কোর: ' + quizScore;
+  document.getElementById('qQuestion').textContent = word;
+  document.getElementById('qHint').textContent = 'এই জার্মান শব্দের বাংলা অর্থ কী?';
+  document.getElementById('qFeedback').textContent = '';
+  document.getElementById('qNext').style.display = 'none';
+
+  const optDiv = document.getElementById('qOptions');
+  optDiv.innerHTML = options.map(opt => {
+    const safeOpt = opt.replace(/'/g, "\\'");
+    const safeCorrect = correctMeaning.replace(/'/g, "\\'");
+    const safeWord = word.replace(/'/g, "\\'");
+    return '<button class="quiz-opt" onclick="checkAnswer(this,\'' + safeOpt + '\',\'' + safeCorrect + '\',\'' + safeWord + '\')">' + opt + '</button>';
+  }).join('');
+}
+
+function checkAnswer(btn, chosen, correct, word) {
+  document.querySelectorAll('.quiz-opt').forEach(b => b.style.pointerEvents='none');
+  if (chosen === correct) {
+    btn.classList.add('correct');
+    document.getElementById('qFeedback').innerHTML = '<span style="color:#000;font-weight:700;">✓ সঠিক!</span>';
+    quizScore++;
+    if (!learnedSet.has(word)) { learnedSet.add(word); saveProgress(); }
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.quiz-opt').forEach(b => { if (b.textContent.trim() === correct) b.classList.add('correct'); });
+    document.getElementById('qFeedback').innerHTML = '<span style="color:#cc0000;">✗ ভুল। সঠিক: ' + correct + '</span>';
+  }
+  document.getElementById('qNext').style.display = 'inline-block';
+}
+
+function nextQuiz() {
+  quizIdx++;
+  showQuizQuestion();
+}
+
+function showQuizResult() {
+  const pct = Math.round(quizScore/quizWords.length*100);
+  document.getElementById('quizOverlay').innerHTML =
+    '<div class="quiz-box" style="text-align:center">' +
+    '<h2 style="color:#000;margin-bottom:8px;">Quiz শেষ!</h2>' +
+    '<p style="color:#000;font-size:1.4rem;margin-bottom:6px;">' + quizScore + '/' + quizWords.length + '</p>' +
+    '<p style="color:var(--muted);margin-bottom:20px;">' + pct + '% সঠিক</p>' +
+    '<p style="font-size:0.85rem;color:var(--text);margin-bottom:20px;">' + (pct>=70?'দারুণ! তুমি ভালো করেছ!':'আরো প্র্যাকটিস করো!') + '</p>' +
+    '<button class="quiz-next" onclick="startQuiz()">আবার খেলো</button><br><br>' +
+    '<button class="quiz-close" onclick="closeQuiz()">বন্ধ করো</button></div>';
+}
+
+function closeQuiz() {
+  document.getElementById('quizOverlay').classList.remove('open');
+  document.getElementById('quizOverlay').innerHTML =
+    '<div class="quiz-box">' +
+    '<div class="quiz-progress" id="qProgress"></div>' +
+    '<div class="quiz-question" id="qQuestion"></div>' +
+    '<div class="quiz-hint" id="qHint"></div>' +
+    '<div class="quiz-options" id="qOptions"></div>' +
+    '<div class="quiz-feedback" id="qFeedback"></div>' +
+    '<button class="quiz-next" id="qNext" onclick="nextQuiz()" style="display:none">পরের প্রশ্ন →</button>' +
+    '<br/><button class="quiz-close" onclick="closeQuiz()">✕ বন্ধ করো</button></div>';
+}
+
+function resetAll() {
+  if (confirm('সব progress মুছে দেব? নিশ্চিত?')) {
+    learnedSet.clear();
+    saveProgress();
+    render();
+  }
+}
+
+function scrollToTop() { window.scrollTo({top:0,behavior:'smooth'}); }
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  render();
+});
+
+buildChapterSelect();
+buildCategorySelect();
+updateStats();
+render();
+</script>
+</body>
+</html>
