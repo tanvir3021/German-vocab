@@ -6,81 +6,81 @@
 <title>German A1 Vocabulary</title>
 <style>
   :root {
-    --bg: #0a0a0a;
-    --card: #161616;
-    --card2: #1e1e1e;
-    --border: #333333;
-    --text: #f0f0f0;
-    --muted: #999999;
-    --accent: #ffffff;
-    --learned: #444444;
+    --bg: #ffffff;
+    --card: #f7f7f7;
+    --card2: #efefef;
+    --border: #cccccc;
+    --text: #111111;
+    --muted: #555555;
+    --accent: #000000;
+    --learned: #999999;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
 
-  header { background: #000; padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--accent); }
-  header h1 { font-size: 1.25rem; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
-  header span { background: var(--card2); color: #fff; font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); }
+  header { background: #fff; padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--accent); }
+  header h1 { font-size: 1.25rem; font-weight: 700; color: #000; letter-spacing: 0.5px; }
+  header span { background: var(--card2); color: #000; font-size: 0.72rem; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); }
 
-  .stats { display: flex; gap: 10px; padding: 12px 16px; background: #050505; flex-wrap: wrap; border-bottom: 1px solid var(--border); }
+  .stats { display: flex; gap: 10px; padding: 12px 16px; background: #f0f0f0; flex-wrap: wrap; border-bottom: 1px solid var(--border); }
   .stat-item { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; font-size: 0.78rem; color: var(--muted); }
-  .stat-item b { color: #fff; font-size: 1rem; display: block; }
+  .stat-item b { color: #000; font-size: 1rem; display: block; }
 
   .controls { padding: 14px 16px; display: flex; gap: 10px; flex-wrap: wrap; background: var(--bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
   .search-box { flex: 1; min-width: 200px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 9px 14px; color: var(--text); font-size: 0.9rem; outline: none; }
-  .search-box:focus { border-color: #fff; }
+  .search-box:focus { border-color: #000; }
   .filter-btn { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; color: var(--muted); font-size: 0.8rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-  .filter-btn.active { background: #fff; border-color: #fff; color: #000; font-weight: 600; }
+  .filter-btn.active { background: #000; border-color: #000; color: #fff; font-weight: 600; }
 
   .select-row { display: flex; gap: 10px; padding: 10px 16px; background: var(--bg); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
   .dropdown { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; color: var(--text); font-size: 0.82rem; cursor: pointer; outline: none; flex: 1; min-width: 160px; }
-  .dropdown:focus { border-color: #fff; }
+  .dropdown:focus { border-color: #000; }
 
   .content { padding: 16px; }
   .category-block { margin-bottom: 22px; }
-  .category-title { font-size: 0.78rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 1.5px; padding: 6px 0; margin-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .category-title { font-size: 0.78rem; font-weight: 700; color: #000; text-transform: uppercase; letter-spacing: 1.5px; padding: 6px 0; margin-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
   .category-count { background: var(--card2); color: var(--muted); font-size: 0.68rem; padding: 2px 8px; border-radius: 10px; letter-spacing: 0; text-transform: none; font-weight: 500; border: 1px solid var(--border); }
 
   .word-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
   .word-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; transition: all 0.2s; position: relative; }
-  .word-card:hover { border-color: #fff; }
-  .word-card.learned { border-color: var(--learned); background: #101010; opacity: 0.75; }
+  .word-card:hover { border-color: #000; }
+  .word-card.learned { border-color: var(--learned); background: #ececec; opacity: 0.8; }
   .word-card.learned .badge { display: flex; }
 
-  .badge { display: none; position: absolute; top: 8px; right: 8px; background: #fff; color: #000; font-size: 0.62rem; padding: 2px 7px; border-radius: 10px; align-items: center; gap: 3px; font-weight: 700; }
+  .badge { display: none; position: absolute; top: 8px; right: 8px; background: #000; color: #fff; font-size: 0.62rem; padding: 2px 7px; border-radius: 10px; align-items: center; gap: 3px; font-weight: 700; }
 
-  .german-word { font-size: 1rem; font-weight: 600; color: #fff; margin-bottom: 4px; }
+  .german-word { font-size: 1rem; font-weight: 600; color: #000; margin-bottom: 4px; }
   .article-badge { font-size: 0.7rem; padding: 1px 7px; border-radius: 8px; margin-right: 5px; font-weight: 700; border: 1px solid var(--border); color: var(--muted); }
 
   .bangla-row { margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--border); }
-  .bangla-meaning { font-size: 0.85rem; color: #ffffff; font-weight: 500; display: block; }
+  .bangla-meaning { font-size: 0.85rem; color: #000fff; font-weight: 500; display: block; }
   .bangla-pronun { font-size: 0.78rem; color: var(--muted); font-style: italic; display: block; margin-top: 2px; }
 
   .card-actions { display: flex; gap: 6px; margin-top: 10px; align-items: center; }
   .btn-audio { background: var(--card2); border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; color: var(--text); cursor: pointer; font-size: 0.78rem; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
-  .btn-audio:hover { background: #fff; color: #000; }
+  .btn-audio:hover { background: #000; color: #fff; }
   .btn-learned { margin-left: auto; background: transparent; border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; color: var(--muted); cursor: pointer; font-size: 0.74rem; transition: all 0.2s; }
-  .btn-learned:hover { border-color: #fff; color: #fff; }
-  .word-card.learned .btn-learned { background: #fff; border-color: #fff; color: #000; }
+  .btn-learned:hover { border-color: #000; color: #000; }
+  .word-card.learned .btn-learned { background: #000; border-color: #000; color: #fff; }
 
   .quiz-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 100; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
   .quiz-overlay.open { display: flex; }
-  .quiz-box { background: var(--card); border: 2px solid #fff; border-radius: 16px; padding: 28px; width: 100%; max-width: 480px; text-align: center; }
+  .quiz-box { background: var(--card); border: 2px solid #000; border-radius: 16px; padding: 28px; width: 100%; max-width: 480px; text-align: center; }
   .quiz-progress { font-size: 0.78rem; color: var(--muted); margin-bottom: 16px; }
-  .quiz-question { font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .quiz-question { font-size: 1.4rem; font-weight: 700; color: #000; margin-bottom: 8px; }
   .quiz-hint { font-size: 0.8rem; color: var(--muted); margin-bottom: 20px; }
   .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
   .quiz-opt { background: var(--card2); border: 2px solid var(--border); border-radius: 10px; padding: 12px; cursor: pointer; font-size: 0.88rem; color: var(--text); transition: all 0.2s; }
-  .quiz-opt:hover { border-color: #fff; }
-  .quiz-opt.correct { background: #fff; border-color: #fff; color: #000; font-weight: 700; }
-  .quiz-opt.wrong { background: #2a0000; border-color: #aa0000; color: #ff6666; }
+  .quiz-opt:hover { border-color: #000; }
+  .quiz-opt.correct { background: #000; border-color: #000; color: #fff; font-weight: 700; }
+  .quiz-opt.wrong { background: #ffe5e5; border-color: #cc0000; color: #cc0000; }
   .quiz-feedback { font-size: 0.9rem; min-height: 30px; margin-bottom: 12px; }
-  .quiz-next { background: #fff; border: none; border-radius: 8px; padding: 10px 28px; color: #000; cursor: pointer; font-size: 0.9rem; font-weight: 700; }
+  .quiz-next { background: #000; border: none; border-radius: 8px; padding: 10px 28px; color: #fff; cursor: pointer; font-size: 0.9rem; font-weight: 700; }
   .quiz-close { background: transparent; border: 1px solid var(--border); border-radius: 8px; padding: 8px 20px; color: var(--muted); cursor: pointer; font-size: 0.85rem; margin-top: 8px; }
 
-  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #000; border-top: 1px solid var(--border); display: flex; z-index: 40; }
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid var(--border); display: flex; z-index: 40; }
   .nav-btn { flex: 1; padding: 12px 0; background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 0.7rem; display: flex; flex-direction: column; align-items: center; gap: 3px; transition: color 0.2s; }
-  .nav-btn:hover, .nav-btn.active { color: #fff; }
+  .nav-btn:hover, .nav-btn.active { color: #000; }
   .nav-icon { font-size: 1.2rem; }
   .pb { padding-bottom: 70px; }
 
@@ -111,7 +111,7 @@
   <button class="filter-btn active" id="btnAll" onclick="setFilter('all')">সব</button>
   <button class="filter-btn" id="btnUnlearned" onclick="setFilter('unlearned')">বাকি</button>
   <button class="filter-btn" id="btnLearned" onclick="setFilter('learned')">শেখা</button>
-  <button class="filter-btn" style="background:#fff;color:#000;font-weight:700;" onclick="startQuiz()">Quiz</button>
+  <button class="filter-btn" style="background:#000;color:#fff;font-weight:700;" onclick="startQuiz()">Quiz</button>
 </div>
 
 <div class="select-row">
@@ -305,7 +305,7 @@ function render() {
 
     if (chapHtml) {
       if (currentChapter === 'all') {
-        html += '<h2 style="color:#fff;font-size:1rem;margin:16px 0 8px;padding-bottom:6px;border-bottom:2px solid #fff;">' + ch + '</h2>';
+        html += '<h2 style="color:#000;font-size:1rem;margin:16px 0 8px;padding-bottom:6px;border-bottom:2px solid #000;">' + ch + '</h2>';
       }
       html += chapHtml;
     }
@@ -363,13 +363,13 @@ function checkAnswer(btn, chosen, correct, word) {
   document.querySelectorAll('.quiz-opt').forEach(b => b.style.pointerEvents='none');
   if (chosen === correct) {
     btn.classList.add('correct');
-    document.getElementById('qFeedback').innerHTML = '<span style="color:#fff;font-weight:700;">✓ সঠিক!</span>';
+    document.getElementById('qFeedback').innerHTML = '<span style="color:#000;font-weight:700;">✓ সঠিক!</span>';
     quizScore++;
     if (!learnedSet.has(word)) { learnedSet.add(word); saveProgress(); }
   } else {
     btn.classList.add('wrong');
     document.querySelectorAll('.quiz-opt').forEach(b => { if (b.textContent.trim() === correct) b.classList.add('correct'); });
-    document.getElementById('qFeedback').innerHTML = '<span style="color:#ff6666;">✗ ভুল। সঠিক: ' + correct + '</span>';
+    document.getElementById('qFeedback').innerHTML = '<span style="color:#cc0000;">✗ ভুল। সঠিক: ' + correct + '</span>';
   }
   document.getElementById('qNext').style.display = 'inline-block';
 }
@@ -383,8 +383,8 @@ function showQuizResult() {
   const pct = Math.round(quizScore/quizWords.length*100);
   document.getElementById('quizOverlay').innerHTML =
     '<div class="quiz-box" style="text-align:center">' +
-    '<h2 style="color:#fff;margin-bottom:8px;">Quiz শেষ!</h2>' +
-    '<p style="color:#fff;font-size:1.4rem;margin-bottom:6px;">' + quizScore + '/' + quizWords.length + '</p>' +
+    '<h2 style="color:#000;margin-bottom:8px;">Quiz শেষ!</h2>' +
+    '<p style="color:#000;font-size:1.4rem;margin-bottom:6px;">' + quizScore + '/' + quizWords.length + '</p>' +
     '<p style="color:var(--muted);margin-bottom:20px;">' + pct + '% সঠিক</p>' +
     '<p style="font-size:0.85rem;color:var(--text);margin-bottom:20px;">' + (pct>=70?'দারুণ! তুমি ভালো করেছ!':'আরো প্র্যাকটিস করো!') + '</p>' +
     '<button class="quiz-next" onclick="startQuiz()">আবার খেলো</button><br><br>' +
